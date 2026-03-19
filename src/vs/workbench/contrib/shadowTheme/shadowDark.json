@@ -1,0 +1,69 @@
+{
+  "id": "shadow-dark",
+  "label": "Shadow Dark",
+  "uiTheme": "vs-dark",
+  "colors": {
+    "focusBorder": "#7c3aed",
+    "editor.background": "#0d0d14",
+    "editor.foreground": "#e2e8f0",
+    "sideBar.background": "#080810",
+    "sideBar.foreground": "#e2e8f0",
+    "activityBar.background": "#0a0a0f",
+    "activityBar.foreground": "#e2e8f0",
+    "titleBar.activeBackground": "#0a0a0f",
+    "titleBar.activeForeground": "#e2e8f0",
+    "statusBar.background": "#0a0a0f",
+    "statusBar.foreground": "#e2e8f0",
+    "button.background": "#7c3aed",
+    "button.foreground": "#ffffff",
+    "errorForeground": "#f87171"
+  },
+  "tokenColors": [
+    {
+      "scope": [
+        "comment",
+        "punctuation.definition.comment"
+      ],
+      "settings": {
+        "foreground": "#4a4a6a"
+      }
+    },
+    {
+      "scope": [
+        "keyword",
+        "storage",
+        "variable.language",
+        "support.type"
+      ],
+      "settings": {
+        "foreground": "#a78bfa"
+      }
+    },
+    {
+      "scope": [
+        "string",
+        "punctuation.definition.string"
+      ],
+      "settings": {
+        "foreground": "#34d399"
+      }
+    },
+    {
+      "scope": [
+        "entity.name.function",
+        "support.function"
+      ],
+      "settings": {
+        "foreground": "#60a5fa"
+      }
+    },
+    {
+      "scope": [
+        "invalid"
+      ],
+      "settings": {
+        "foreground": "#f87171"
+      }
+    }
+  ]
+}
