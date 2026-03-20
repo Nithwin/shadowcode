@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>pfm_app_url</key>
-    <string>https://code.visualstudio.com/</string>
+    <string>https://docs.shadowcode.dev/</string>
     <key>pfm_description</key>
     <string>Code - OSS Managed Settings</string>
     <key>pfm_documentation_url</key>
-    <string>https://code.visualstudio.com/docs/setup/enterprise</string>
+    <string>https://docs.shadowcode.dev/docs/setup/enterprise</string>
     <key>pfm_domain</key>
     <string>com.visualstudio.code.oss</string>
     <key>pfm_format_version</key>
@@ -185,7 +185,7 @@ This feature disables critical security protections and makes it much easier for
 <key>pfm_default</key>
 <string></string>
 <key>pfm_description</key>
-<string>Specify a list of extensions that are allowed to use. This helps maintain a secure and consistent development environment by restricting the use of unauthorized extensions. More information: https://code.visualstudio.com/docs/setup/enterprise#_configure-allowed-extensions</string>
+<string>Specify a list of extensions that are allowed to use. This helps maintain a secure and consistent development environment by restricting the use of unauthorized extensions. More information: https://docs.shadowcode.dev/docs/setup/enterprise#_configure-allowed-extensions</string>
 <key>pfm_name</key>
 <string>AllowedExtensions</string>
 <key>pfm_title</key>

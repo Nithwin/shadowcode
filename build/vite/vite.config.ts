@@ -152,7 +152,7 @@ logger.warn = (msg, options) => {
 		return;
 	}
 
-	// See https://github.com/microsoft/vscode/issues/278153
+	// See https://github.com/shadowcode/shadowcode/issues/278153
 	if (msg.indexOf('marked.esm.js.map') !== -1 || msg.indexOf('purify.es.mjs.map') !== -1) {
 		return;
 	}

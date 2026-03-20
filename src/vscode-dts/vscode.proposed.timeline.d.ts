@@ -5,7 +5,7 @@
 
 declare module 'vscode' {
 
-	// https://github.com/microsoft/vscode/issues/84297
+	// https://github.com/shadowcode/shadowcode/issues/84297
 
 	export class TimelineItem {
 		/**

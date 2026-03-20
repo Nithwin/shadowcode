@@ -712,7 +712,7 @@ suite('AgentSessionsDataSource', () => {
 
 		test('groups sessions by metadata.repository (URL format)', () => {
 			const sessions = [
-				createMockSession({ id: '1', metadata: { repository: 'https://github.com/microsoft/vscode' } }),
+				createMockSession({ id: '1', metadata: { repository: 'https://github.com/shadowcode/shadowcode' } }),
 			];
 
 			const filter = createMockFilter({ groupBy: AgentSessionsGrouping.Repository });
@@ -726,8 +726,8 @@ suite('AgentSessionsDataSource', () => {
 
 		test('strips .git suffix from repository URLs', () => {
 			const sessions = [
-				createMockSession({ id: '1', metadata: { repository: 'https://github.com/microsoft/vscode.git' } }),
-				createMockSession({ id: '2', metadata: { repositoryUrl: 'https://github.com/microsoft/vscode.git' } }),
+				createMockSession({ id: '1', metadata: { repository: 'https://github.com/shadowcode/shadowcode.git' } }),
+				createMockSession({ id: '2', metadata: { repositoryUrl: 'https://github.com/shadowcode/shadowcode.git' } }),
 			];
 
 			const filter = createMockFilter({ groupBy: AgentSessionsGrouping.Repository });
@@ -755,7 +755,7 @@ suite('AgentSessionsDataSource', () => {
 
 		test('groups sessions by metadata.repositoryUrl', () => {
 			const sessions = [
-				createMockSession({ id: '1', metadata: { repositoryUrl: 'https://github.com/microsoft/vscode' } }),
+				createMockSession({ id: '1', metadata: { repositoryUrl: 'https://github.com/shadowcode/shadowcode' } }),
 			];
 
 			const filter = createMockFilter({ groupBy: AgentSessionsGrouping.Repository });
@@ -966,7 +966,7 @@ suite('AgentSessionsDataSource', () => {
 		});
 
 		test('returns repo from repository URL', () => {
-			const session = createMockSession({ id: '1', metadata: { repository: 'https://github.com/microsoft/vscode' } });
+			const session = createMockSession({ id: '1', metadata: { repository: 'https://github.com/shadowcode/shadowcode' } });
 			assert.strictEqual(getRepositoryName(session), 'vscode');
 		});
 

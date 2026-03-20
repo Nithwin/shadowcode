@@ -67,10 +67,10 @@ else {
 			applicationName: 'code-oss',
 			dataFolderName: '.vscode-oss',
 			urlProtocol: 'code-oss',
-			reportIssueUrl: 'https://github.com/microsoft/vscode/issues/new',
+			reportIssueUrl: 'https://github.com/shadowcode/shadowcode/issues/new',
 			licenseName: 'MIT',
-			licenseUrl: 'https://github.com/microsoft/vscode/blob/main/LICENSE.txt',
-			serverLicenseUrl: 'https://github.com/microsoft/vscode/blob/main/LICENSE.txt',
+			licenseUrl: 'https://github.com/shadowcode/shadowcode/blob/main/LICENSE.txt',
+			serverLicenseUrl: 'https://github.com/shadowcode/shadowcode/blob/main/LICENSE.txt',
 			defaultChatAgent: {
 				extensionId: 'GitHub.copilot',
 				chatExtensionId: 'GitHub.copilot-chat',

@@ -204,63 +204,63 @@ suite('git', () => {
 
 		test('single remote', () => {
 			const sample = `[remote "origin"]
-	url = https://github.com/microsoft/vscode.git
+	url = https://github.com/shadowcode/shadowcode.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 `;
 
 			assert.deepStrictEqual(parseGitRemotes(sample), [
-				{ name: 'origin', fetchUrl: 'https://github.com/microsoft/vscode.git', pushUrl: 'https://github.com/microsoft/vscode.git', isReadOnly: false }
+				{ name: 'origin', fetchUrl: 'https://github.com/shadowcode/shadowcode.git', pushUrl: 'https://github.com/shadowcode/shadowcode.git', isReadOnly: false }
 			]);
 		});
 
 		test('single remote (multiple urls)', () => {
 			const sample = `[remote "origin"]
-	url = https://github.com/microsoft/vscode.git
-	url = https://github.com/microsoft/vscode2.git
+	url = https://github.com/shadowcode/shadowcode.git
+	url = https://github.com/shadowcode/shadowcode2.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 `;
 
 			assert.deepStrictEqual(parseGitRemotes(sample), [
-				{ name: 'origin', fetchUrl: 'https://github.com/microsoft/vscode.git', pushUrl: 'https://github.com/microsoft/vscode.git', isReadOnly: false }
+				{ name: 'origin', fetchUrl: 'https://github.com/shadowcode/shadowcode.git', pushUrl: 'https://github.com/shadowcode/shadowcode.git', isReadOnly: false }
 			]);
 		});
 
 		test('multiple remotes', () => {
 			const sample = `[remote "origin"]
-	url = https://github.com/microsoft/vscode.git
-	pushurl = https://github.com/microsoft/vscode1.git
+	url = https://github.com/shadowcode/shadowcode.git
+	pushurl = https://github.com/shadowcode/shadowcode1.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [remote "remote2"]
-	url = https://github.com/microsoft/vscode2.git
+	url = https://github.com/shadowcode/shadowcode2.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 `;
 
 			assert.deepStrictEqual(parseGitRemotes(sample), [
-				{ name: 'origin', fetchUrl: 'https://github.com/microsoft/vscode.git', pushUrl: 'https://github.com/microsoft/vscode1.git', isReadOnly: false },
-				{ name: 'remote2', fetchUrl: 'https://github.com/microsoft/vscode2.git', pushUrl: 'https://github.com/microsoft/vscode2.git', isReadOnly: false }
+				{ name: 'origin', fetchUrl: 'https://github.com/shadowcode/shadowcode.git', pushUrl: 'https://github.com/shadowcode/shadowcode1.git', isReadOnly: false },
+				{ name: 'remote2', fetchUrl: 'https://github.com/shadowcode/shadowcode2.git', pushUrl: 'https://github.com/shadowcode/shadowcode2.git', isReadOnly: false }
 			]);
 		});
 
 		test('remotes (white space)', () => {
 			const sample = ` [remote "origin"]
-	url  =  https://github.com/microsoft/vscode.git
-	pushurl=https://github.com/microsoft/vscode1.git
+	url  =  https://github.com/shadowcode/shadowcode.git
+	pushurl=https://github.com/shadowcode/shadowcode1.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 [ remote"remote2"]
-	url = https://github.com/microsoft/vscode2.git
+	url = https://github.com/shadowcode/shadowcode2.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 `;
 
 			assert.deepStrictEqual(parseGitRemotes(sample), [
-				{ name: 'origin', fetchUrl: 'https://github.com/microsoft/vscode.git', pushUrl: 'https://github.com/microsoft/vscode1.git', isReadOnly: false },
-				{ name: 'remote2', fetchUrl: 'https://github.com/microsoft/vscode2.git', pushUrl: 'https://github.com/microsoft/vscode2.git', isReadOnly: false }
+				{ name: 'origin', fetchUrl: 'https://github.com/shadowcode/shadowcode.git', pushUrl: 'https://github.com/shadowcode/shadowcode1.git', isReadOnly: false },
+				{ name: 'remote2', fetchUrl: 'https://github.com/shadowcode/shadowcode2.git', pushUrl: 'https://github.com/shadowcode/shadowcode2.git', isReadOnly: false }
 			]);
 		});
 
 		test('remotes (invalid section)', () => {
 			const sample = `[remote "origin"
-	url = https://github.com/microsoft/vscode.git
-	pushurl = https://github.com/microsoft/vscode1.git
+	url = https://github.com/shadowcode/shadowcode.git
+	pushurl = https://github.com/shadowcode/shadowcode1.git
 	fetch = +refs/heads/*:refs/remotes/origin/*
 `;
 

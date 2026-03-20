@@ -5,7 +5,7 @@
 
 declare module 'vscode' {
 
-	// @kycutler https://github.com/microsoft/vscode/issues/300319
+	// @kycutler https://github.com/shadowcode/shadowcode/issues/300319
 
 	/**
 	 * An integrated browser page displayed in an editor tab.

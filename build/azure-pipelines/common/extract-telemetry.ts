@@ -15,12 +15,12 @@ const extractionDir = path.join(BUILD_STAGINGDIRECTORY, 'extraction');
 fs.mkdirSync(extractionDir, { recursive: true });
 
 const repos = [
-	'https://github.com/microsoft/vscode-extension-telemetry.git',
-	'https://github.com/microsoft/vscode-chrome-debug-core.git',
-	'https://github.com/microsoft/vscode-node-debug2.git',
-	'https://github.com/microsoft/vscode-node-debug.git',
-	'https://github.com/microsoft/vscode-html-languageservice.git',
-	'https://github.com/microsoft/vscode-json-languageservice.git',
+	'https://github.com/shadowcode/shadowcode-extension-telemetry.git',
+	'https://github.com/shadowcode/shadowcode-chrome-debug-core.git',
+	'https://github.com/shadowcode/shadowcode-node-debug2.git',
+	'https://github.com/shadowcode/shadowcode-node-debug.git',
+	'https://github.com/shadowcode/shadowcode-html-languageservice.git',
+	'https://github.com/shadowcode/shadowcode-json-languageservice.git',
 ];
 
 for (const repo of repos) {

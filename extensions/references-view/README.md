@@ -7,7 +7,7 @@ This extension shows reference search results as separate view, just like search
 - Navigate through search results via <kbd>F4</kbd> and <kbd>Shift+F4</kbd>
 - Remove references from the list via inline commands
 
-![](https://raw.githubusercontent.com/microsoft/vscode-references-view/master/media/demo.png)
+![](https://raw.githubusercontent.com/shadowcode/shadowcode-references-view/master/media/demo.png)
 
 **Note** that this extension is bundled with Visual Studio Code version 1.29 and later - it doesn't need to be installed anymore.
 
@@ -29,6 +29,6 @@ When you submit a pull request, a CLA-bot will automatically determine whether y
 a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions
 provided by the bot. You will only need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
-For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or
-contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct](https://shadowcode.dev/code-of-conduct/).
+For more information see the [Code of Conduct FAQ](https://shadowcode.dev/code-of-conduct/faq/) or
+contact [security@shadowcode.dev](mailto:security@shadowcode.dev) with any additional questions or comments.

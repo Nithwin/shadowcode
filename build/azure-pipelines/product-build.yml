@@ -90,7 +90,7 @@ parameters:
     type: boolean
     default: true
   - name: VSCODE_PUBLISH
-    displayName: "Publish to builds.code.visualstudio.com"
+    displayName: "Publish to builds.shadowcode.dev"
     type: boolean
     default: true
   - name: VSCODE_RELEASE
@@ -104,7 +104,7 @@ parameters:
 
 variables:
   - name: VSCODE_PRIVATE_BUILD
-    value: ${{ ne(variables['Build.Repository.Uri'], 'https://github.com/microsoft/vscode.git') }}
+    value: ${{ ne(variables['Build.Repository.Uri'], 'https://github.com/shadowcode/shadowcode.git') }}
   - name: NPM_REGISTRY
     value: ${{ parameters.NPM_REGISTRY }}
   - name: CARGO_REGISTRY
@@ -148,7 +148,7 @@ variables:
   - name: AZURE_DOCUMENTDB_ENDPOINT
     value: https://vscode.documents.azure.com/
   - name: VSCODE_MIXIN_REPO
-    value: microsoft/vscode-distro
+    value: shadowcode/shadowcode-distro
   - name: skipComponentGovernanceDetection
     value: true
   - name: ComponentDetection.Timeout

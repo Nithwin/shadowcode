@@ -4,4 +4,4 @@
 
 ## Features
 
-See [JSON in Visual Studio Code](https://code.visualstudio.com/docs/languages/json) to learn about the features of this extension.
+See [JSON in Visual Studio Code](https://docs.shadowcode.dev/docs/languages/json) to learn about the features of this extension.

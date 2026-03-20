@@ -238,7 +238,7 @@ function runTsGoTypeCheck(): Promise<void> {
 	});
 }
 
-const sourceMappingURLBase = `https://main.vscode-cdn.net/sourcemaps/${commit}`;
+const sourceMappingURLBase = `https://main.shadowcode-cdn.dev/sourcemaps/${commit}`;
 const isCI = !!process.env['CI'] || !!process.env['BUILD_ARTIFACTSTAGINGDIRECTORY'] || !!process.env['GITHUB_WORKSPACE'];
 const useCdnSourceMapsForPackagingTasks = isCI;
 const stripSourceMapsInPackagingTasks = isCI;
@@ -344,7 +344,8 @@ function packageTask(platform: string, arch: string, sourceFolderName: string, d
 			.pipe(rename(function (path) { path.dirname = path.dirname!.replace(new RegExp('^' + out), 'out'); }))
 			.pipe(util.setExecutableBit(['**/*.sh']));
 
-		const platformSpecificBuiltInExtensionsExclusions = product.builtInExtensions.filter(ext => {
+		const builtInExtensions = ((product as { builtInExtensions?: Array<{ name: string; platforms?: string[] }> }).builtInExtensions ?? []);
+		const platformSpecificBuiltInExtensionsExclusions = builtInExtensions.filter(ext => {
 			if (!(ext as { platforms?: string[] }).platforms) {
 				return false;
 			}
@@ -549,7 +550,7 @@ function packageTask(platform: string, arch: string, sourceFolderName: string, d
 		let result: NodeJS.ReadWriteStream = all
 			.pipe(util.skipDirectories())
 			.pipe(util.fixWin32DirectoryPermissions())
-			.pipe(filter(['**', '!**/.github/**'], { dot: true })) // https://github.com/microsoft/vscode/issues/116523
+			.pipe(filter(['**', '!**/.github/**'], { dot: true })) // https://github.com/shadowcode/shadowcode/issues/116523
 			.pipe(electron(electronConfig))
 			.pipe(filter([
 				'**',

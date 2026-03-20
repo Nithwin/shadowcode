@@ -30,7 +30,7 @@ const BUNDLED_FILE_HEADER = [
 	' * Copyright (c) Microsoft Corporation. All rights reserved.',
 	' * Version: ' + headerVersion,
 	' * Released under the MIT license',
-	' * https://github.com/microsoft/vscode/blob/main/LICENSE.txt',
+	' * https://github.com/shadowcode/shadowcode/blob/main/LICENSE.txt',
 	' *-----------------------------------------------------------*/',
 	''
 ].join('\n');
@@ -187,7 +187,7 @@ const finalEditorResourcesTask = task.define('final-editor-resources', () => {
 		// version.txt
 		gulp.src('build/monaco/version.txt')
 			.pipe(es.through(function (data) {
-				data.contents = Buffer.from(`monaco-editor-core: https://github.com/microsoft/vscode/tree/${sha1}`);
+				data.contents = Buffer.from(`monaco-editor-core: https://github.com/shadowcode/shadowcode/tree/${sha1}`);
 				this.emit('data', data);
 			}))
 			.pipe(gulp.dest('out-monaco-editor-core')),

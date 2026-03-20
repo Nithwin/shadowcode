@@ -28,7 +28,7 @@ export enum HookType {
 export type HookTypeValue = `${HookType}`;
 
 export const HOOKS_BY_TARGET: Record<Target, Record<string, HookType>> = {
-	// see https://code.visualstudio.com/docs/copilot/customization/hooks#_hook-lifecycle-events
+	// see https://docs.shadowcode.dev/docs/copilot/customization/hooks#_hook-lifecycle-events
 	[Target.VSCode]: {
 		'SessionStart': HookType.SessionStart,
 		'UserPromptSubmit': HookType.UserPromptSubmit,

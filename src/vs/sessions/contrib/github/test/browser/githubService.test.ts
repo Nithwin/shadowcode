@@ -109,7 +109,7 @@ suite('getGitHubContext', () => {
 	});
 
 	test('parses PR number from pullRequestUrl', () => {
-		const url = 'https://github.com/microsoft/vscode/pull/12345';
+		const url = 'https://github.com/shadowcode/shadowcode/pull/12345';
 		const match = /\/pull\/(\d+)/.exec(url);
 		assert.ok(match);
 		assert.strictEqual(parseInt(match![1], 10), 12345);

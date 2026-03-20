@@ -31,7 +31,7 @@ suite('PluginMarketplaceService', () => {
 			return;
 		}
 		assert.strictEqual(parsed.kind, MarketplaceReferenceKind.GitHubShorthand);
-		assert.strictEqual(parsed.cloneUrl, 'https://github.com/microsoft/vscode.git');
+		assert.strictEqual(parsed.cloneUrl, 'https://github.com/shadowcode/shadowcode.git');
 		assert.strictEqual(parsed.canonicalId, 'github:microsoft/vscode');
 		assert.strictEqual(parsed.displayLabel, 'microsoft/vscode');
 		assert.deepStrictEqual(parsed.cacheSegments, ['github.com', 'microsoft', 'vscode']);
@@ -157,13 +157,13 @@ suite('PluginMarketplaceService', () => {
 	test('deduplicates equivalent Git URI forms but keeps shorthand distinct', () => {
 		const parsed = parseMarketplaceReferences([
 			'microsoft/vscode',
-			'https://github.com/microsoft/vscode.git',
+			'https://github.com/shadowcode/shadowcode.git',
 			'git@github.com:microsoft/vscode.git',
 		]);
 
 		assert.deepStrictEqual(parsed.map(r => r.canonicalId), [
 			'github:microsoft/vscode',
-			'git:github.com/microsoft/vscode.git',
+			'git:github.com/shadowcode/shadowcode.git',
 		]);
 	});
 

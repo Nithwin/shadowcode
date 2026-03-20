@@ -87,7 +87,7 @@ suite('PluginInstallService', () => {
 			addedPlugins: [],
 			dialogConfirmResult: true,
 			fileExistsResult: true,
-			ensureRepositoryResult: URI.file('/cache/agentPlugins/github.com/microsoft/vscode'),
+			ensureRepositoryResult: URI.file('/cache/agentPlugins/github.com/shadowcode/shadowcode'),
 			ensurePluginSourceResult: URI.file('/cache/agentPlugins/npm/my-package'),
 			pluginSourceInstallUris: new Map(),
 			terminalCommands: [],
@@ -311,7 +311,7 @@ suite('PluginInstallService', () => {
 				sourceDescriptor: { kind: PluginSourceKind.RelativePath, path: 'plugins/myPlugin' },
 			});
 			const uri = service.getPluginInstallUri(plugin);
-			assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/microsoft/vscode/plugins/myPlugin');
+			assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode/plugins/myPlugin');
 		});
 
 		test('delegates to getPluginSourceInstallUri for npm plugins', () => {

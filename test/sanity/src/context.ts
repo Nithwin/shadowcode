@@ -14,7 +14,7 @@ import { Browser, chromium, Page, webkit } from 'playwright';
 import { Capability, detectCapabilities } from './detectors.js';
 
 /**
- * Response from https://update.code.visualstudio.com/api/versions/commit:<commit>/<target>/<quality>
+ * Response from https://update.docs.shadowcode.dev/api/versions/commit:<commit>/<target>/<quality>
  */
 interface ITargetMetadata {
 	url: string;
@@ -288,7 +288,7 @@ export class TestContext {
 	 * @returns The target metadata.
 	 */
 	public async fetchMetadata(target: string): Promise<ITargetMetadata> {
-		const url = `https://update.code.visualstudio.com/api/versions/commit:${this.options.commit}/${target}/${this.options.quality}`;
+		const url = `https://update.docs.shadowcode.dev/api/versions/commit:${this.options.commit}/${target}/${this.options.quality}`;
 
 		this.log(`Fetching metadata for ${target} from ${url}`);
 		const response = await this.fetchNoErrors(url);

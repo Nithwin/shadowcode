@@ -5,7 +5,7 @@
 
 declare module 'vscode' {
 
-	// https://github.com/microsoft/vscode/issues/120173
+	// https://github.com/shadowcode/shadowcode/issues/120173
 
 	export interface ResourceTrustRequestOptions {
 		/**

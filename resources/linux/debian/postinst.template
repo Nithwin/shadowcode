@@ -56,7 +56,7 @@ if [ "@@NAME@@" != "code-oss" ]; then
 		WRITE_SOURCE='yes'
 	elif [ -f /etc/rpi-issue ]; then
 		# Do not write on Raspberry Pi OS
-		# https://github.com/microsoft/vscode/issues/118825
+		# https://github.com/shadowcode/shadowcode/issues/118825
 		WRITE_SOURCE='no'
 	else
 		WRITE_SOURCE='ask'

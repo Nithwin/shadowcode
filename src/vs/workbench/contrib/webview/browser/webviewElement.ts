@@ -113,7 +113,7 @@ export class WebviewElement extends Disposable implements IWebviewElement, Webvi
 		}
 
 		if (this.window.document.activeElement && this.window.document.activeElement !== this.element) {
-			// looks like https://github.com/microsoft/vscode/issues/132641
+			// looks like https://github.com/shadowcode/shadowcode/issues/132641
 			// where the focus is actually not in the `<iframe>`
 			return false;
 		}
@@ -842,7 +842,7 @@ export class WebviewElement extends Disposable implements IWebviewElement, Webvi
 			// noop
 		}
 
-		// Workaround for https://github.com/microsoft/vscode/issues/75209
+		// Workaround for https://github.com/shadowcode/shadowcode/issues/75209
 		// Focusing the inner webview is async so for a sequence of actions such as:
 		//
 		// 1. Open webview

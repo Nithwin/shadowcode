@@ -130,7 +130,7 @@ export class SessionTypePickerActionItem extends ChatInputPickerActionViewItem {
 	}
 
 	protected _getLearnMore(): IAction {
-		const learnMoreUrl = 'https://code.visualstudio.com/docs/copilot/agents/overview';
+		const learnMoreUrl = 'https://docs.shadowcode.dev/docs/copilot/agents/overview';
 		return {
 			id: 'workbench.action.chat.agentOverview.learnMore',
 			label: localize('chat.learnMoreAgentTypes', "Learn about agent types..."),

@@ -8,7 +8,7 @@ import { existsSync, rmSync } from 'fs';
 
 const rootPath = resolve(import.meta.dirname, '..', '..');
 const telemetryDocsPath = join(rootPath, 'vscode-telemetry-docs');
-const repoUrl = 'https://github.com/microsoft/vscode-telemetry-docs';
+const repoUrl = 'https://github.com/shadowcode/shadowcode-telemetry-docs';
 
 console.log('Cloning vscode-telemetry-docs repository...');
 

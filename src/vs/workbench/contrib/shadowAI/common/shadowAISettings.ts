@@ -11,6 +11,15 @@ export const ShadowAIConfiguration = {
 	GroqEndpoint: 'shadowAI.groqEndpoint',
 	GroqApiKey: 'shadowAI.groqApiKey',
 	GroqModels: 'shadowAI.groqModels',
+	OpenRouterEndpoint: 'shadowAI.openRouterEndpoint',
+	OpenRouterApiKey: 'shadowAI.openRouterApiKey',
+	OpenRouterModels: 'shadowAI.openRouterModels',
+	HuggingFaceEndpoint: 'shadowAI.huggingFaceEndpoint',
+	HuggingFaceApiKey: 'shadowAI.huggingFaceApiKey',
+	HuggingFaceModels: 'shadowAI.huggingFaceModels',
+	CustomEndpoint: 'shadowAI.customEndpoint',
+	CustomApiKey: 'shadowAI.customApiKey',
+	CustomModels: 'shadowAI.customModels',
 	DefaultModel: 'shadowAI.defaultModel',
 };
 
@@ -44,6 +53,63 @@ configurationRegistry.registerConfiguration({
 			items: { type: 'string' },
 			default: ['llama-3.1-8b-instant', 'llama3-8b-8192', 'mixtral-8x7b-32768'],
 			description: localize('shadowAI.groqModels', "Groq models available in the Shadow AI provider switcher."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.OpenRouterEndpoint]: {
+			type: 'string',
+			default: 'https://openrouter.ai/api/v1',
+			description: localize('shadowAI.openRouterEndpoint', "The endpoint URL for OpenRouter's OpenAI-compatible API."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.OpenRouterApiKey]: {
+			type: 'string',
+			default: '',
+			description: localize('shadowAI.openRouterApiKey', "OpenRouter API key used for cloud model requests."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.OpenRouterModels]: {
+			type: 'array',
+			items: { type: 'string' },
+			default: ['meta-llama/llama-3.1-8b-instruct:free', 'mistralai/mistral-7b-instruct:free', 'qwen/qwen-2.5-7b-instruct:free'],
+			description: localize('shadowAI.openRouterModels', "OpenRouter models available in the Shadow AI provider switcher."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.HuggingFaceEndpoint]: {
+			type: 'string',
+			default: 'https://router.huggingface.co/v1',
+			description: localize('shadowAI.huggingFaceEndpoint', "The endpoint URL for Hugging Face's OpenAI-compatible router."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.HuggingFaceApiKey]: {
+			type: 'string',
+			default: '',
+			description: localize('shadowAI.huggingFaceApiKey', "Hugging Face API token used for cloud model requests."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.HuggingFaceModels]: {
+			type: 'array',
+			items: { type: 'string' },
+			default: ['meta-llama/Llama-3.1-8B-Instruct', 'Qwen/Qwen2.5-Coder-7B-Instruct', 'mistralai/Mistral-7B-Instruct-v0.3'],
+			description: localize('shadowAI.huggingFaceModels', "Hugging Face models available in the Shadow AI provider switcher."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.CustomEndpoint]: {
+			type: 'string',
+			default: 'https://api.openai.com/v1',
+			description: localize('shadowAI.customEndpoint', "A custom OpenAI-compatible endpoint URL for third-party providers."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.CustomApiKey]: {
+			type: 'string',
+			default: '',
+			description: localize('shadowAI.customApiKey', "API key used for the custom OpenAI-compatible provider."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.CustomModels]: {
+			type: 'array',
+			items: { type: 'string' },
+			default: [],
+			description: localize('shadowAI.customModels', "Custom provider models available in the Shadow AI provider switcher."),
 			scope: ConfigurationScope.RESOURCE
 		},
 		[ShadowAIConfiguration.DefaultModel]: {

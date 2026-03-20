@@ -390,8 +390,8 @@ suite('Render Functions', () => {
 		test('should include VS Code specific URLs', () => {
 			const result = renderProfileManifest('VS Code', 'com.microsoft.vscode', ['1.0'], [mockCategory], [mockPolicy]);
 
-			assert.ok(result.includes('https://code.visualstudio.com/'));
-			assert.ok(result.includes('https://code.visualstudio.com/docs/setup/enterprise'));
+			assert.ok(result.includes('https://docs.shadowcode.dev/'));
+			assert.ok(result.includes('https://docs.shadowcode.dev/docs/setup/enterprise'));
 		});
 
 		test('should include last modified date', () => {
@@ -503,7 +503,7 @@ suite('Render Functions', () => {
 			</dict>
 		</array>
 		<key>PayloadDescription</key>
-		<string>This profile manages VS Code. For more information see https://code.visualstudio.com/docs/setup/enterprise</string>
+		<string>This profile manages VS Code. For more information see https://docs.shadowcode.dev/docs/setup/enterprise</string>
 		<key>PayloadDisplayName</key>
 		<string>VS Code</string>
 		<key>PayloadIdentifier</key>
@@ -610,7 +610,7 @@ suite('Render Functions', () => {
 			};
 			const result = renderMacOSPolicy(product, [mockPolicy], []);
 
-			assert.ok(result.profile.includes('https://code.visualstudio.com/docs/setup/enterprise'));
+			assert.ok(result.profile.includes('https://docs.shadowcode.dev/docs/setup/enterprise'));
 		});
 
 		test('should set TargetDeviceType to 5', () => {

@@ -88,11 +88,11 @@
       }
     ],
     "configurationDefaults": {
-      "workbench.iconTheme": "material-icon-theme"
+      "workbench.iconTheme": "vs-minimal"
     }
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/shadowcode/shadowcode.git"
   }
 }

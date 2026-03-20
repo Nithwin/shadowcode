@@ -413,7 +413,7 @@ export function registerTerminalActions() {
 				secondary: [KeyMod.Alt | KeyMod.CtrlCmd | KeyCode.UpArrow]
 			},
 			when: ContextKeyExpr.and(TerminalContextKeys.focus, TerminalContextKeys.splitTerminalActive),
-			// Should win over send sequence commands https://github.com/microsoft/vscode/issues/259326
+			// Should win over send sequence commands https://github.com/shadowcode/shadowcode/issues/259326
 			weight: KeybindingWeight.WorkbenchContrib + 1
 		},
 		precondition: sharedWhenClause.terminalAvailable,
@@ -434,7 +434,7 @@ export function registerTerminalActions() {
 				secondary: [KeyMod.Alt | KeyMod.CtrlCmd | KeyCode.DownArrow]
 			},
 			when: ContextKeyExpr.and(TerminalContextKeys.focus, TerminalContextKeys.splitTerminalActive),
-			// Should win over send sequence commands https://github.com/microsoft/vscode/issues/259326
+			// Should win over send sequence commands https://github.com/shadowcode/shadowcode/issues/259326
 			weight: KeybindingWeight.WorkbenchContrib + 1
 		},
 		precondition: sharedWhenClause.terminalAvailable,

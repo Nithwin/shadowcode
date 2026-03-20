@@ -52,9 +52,9 @@ export abstract class VSCodeTestRunner {
 		const args = [
 			...this.prepareArguments(baseArgs, filter),
 			`--remote-debugging-port=${port}`,
-			// for breakpoint freeze: https://github.com/microsoft/vscode/issues/122225#issuecomment-885377304
+			// for breakpoint freeze: https://github.com/shadowcode/shadowcode/issues/122225#issuecomment-885377304
 			'--js-flags="--regexp_interpret_all"',
-			// for general runtime freezes: https://github.com/microsoft/vscode/issues/127861#issuecomment-904144910
+			// for general runtime freezes: https://github.com/shadowcode/shadowcode/issues/127861#issuecomment-904144910
 			'--disable-features=CalculateNativeWinOcclusion',
 			'--timeout=0',
 			`--waitServer=${server.port}`,

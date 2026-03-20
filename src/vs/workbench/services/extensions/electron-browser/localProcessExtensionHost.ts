@@ -269,7 +269,7 @@ export class NativeLocalProcessExtensionHost extends Disposable implements IExte
 			opts.execArgv.unshift('--prof');
 		}
 
-		// Refs https://github.com/microsoft/vscode/issues/189805
+		// Refs https://github.com/shadowcode/shadowcode/issues/189805
 		//
 		// Enable experimental network inspection
 		// inspector agent is always setup hence add this flag

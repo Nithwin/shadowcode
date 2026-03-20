@@ -87,7 +87,7 @@ export function computeUpdateInfoVersion(currentVersion: string, targetVersion: 
  */
 export function getUpdateInfoUrl(version: string): string {
 	const versionLabel = version.replace(/\./g, '_').replace(/_0$/, '');
-	return `https://code.visualstudio.com/raw/v${versionLabel}_update.md`;
+	return `https://docs.shadowcode.dev/raw/v${versionLabel}_update.md`;
 }
 
 /**
@@ -213,7 +213,7 @@ export function preprocessError(error?: string): string | undefined {
 
 	return error.replace(
 		/See https:\/\/github\.com\/Squirrel\/Squirrel\.Mac\/issues\/182 for more information/,
-		'This might mean the application was put on quarantine by macOS. See [this link](https://github.com/microsoft/vscode/issues/7426#issuecomment-425093469) for more information'
+		'This might mean the application was put on quarantine by macOS. See [this link](https://github.com/shadowcode/shadowcode/issues/7426#issuecomment-425093469) for more information'
 	);
 }
 

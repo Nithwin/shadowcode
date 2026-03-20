@@ -206,7 +206,7 @@ If the setting `jsonFoldingLimit` or `jsoncFoldingLimit` is set, the JSON langua
 
 ## Try
 
-The JSON language server is shipped with [Visual Studio Code](https://code.visualstudio.com/) as part of the built-in VSCode extension `json-language-features`. The server is started when the first JSON file is opened. The [VSCode JSON documentation](https://code.visualstudio.com/docs/languages/json) for detailed information on the user experience and has more information on how to configure the language support.
+The JSON language server is shipped with [Visual Studio Code](https://docs.shadowcode.dev/) as part of the built-in VSCode extension `json-language-features`. The server is started when the first JSON file is opened. The [VSCode JSON documentation](https://docs.shadowcode.dev/docs/languages/json) for detailed information on the user experience and has more information on how to configure the language support.
 
 ## Integrate
 
@@ -229,24 +229,24 @@ To connect to the server from NodeJS, see Remy Suen's great write-up on [how to 
 
 ## Participate
 
-The source code of the JSON language server can be found in the [VSCode repository](https://github.com/microsoft/vscode) at [extensions/json-language-features/server](https://github.com/microsoft/vscode/tree/master/extensions/json-language-features/server).
+The source code of the JSON language server can be found in the [VSCode repository](https://github.com/shadowcode/shadowcode) at [extensions/json-language-features/server](https://github.com/shadowcode/shadowcode/tree/master/extensions/json-language-features/server).
 
-File issues and pull requests in the [VSCode GitHub Issues](https://github.com/microsoft/vscode/issues). See the document [How to Contribute](https://github.com/microsoft/vscode/wiki/How-to-Contribute) on how to build and run from source.
+File issues and pull requests in the [VSCode GitHub Issues](https://github.com/shadowcode/shadowcode/issues). See the document [How to Contribute](https://github.com/shadowcode/shadowcode/wiki/How-to-Contribute) on how to build and run from source.
 
 Most of the functionality of the server is located in libraries:
 
 - [jsonc-parser](https://github.com/microsoft/node-jsonc-parser) contains the JSON parser and scanner.
-- [vscode-json-languageservice](https://github.com/microsoft/vscode-json-languageservice) contains the implementation of all features as a re-usable library.
-- [vscode-languageserver-node](https://github.com/microsoft/vscode-languageserver-node) contains the implementation of language server for NodeJS.
+- [vscode-json-languageservice](https://github.com/shadowcode/shadowcode-json-languageservice) contains the implementation of all features as a re-usable library.
+- [vscode-languageserver-node](https://github.com/shadowcode/shadowcode-languageserver-node) contains the implementation of language server for NodeJS.
 
 Help on any of these projects is very welcome.
 
 ## Code of Conduct
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
+This project has adopted the [Microsoft Open Source Code of Conduct](https://shadowcode.dev/code-of-conduct/). For more information see the [Code of Conduct FAQ](https://shadowcode.dev/code-of-conduct/faq/) or contact [security@shadowcode.dev](mailto:security@shadowcode.dev) with any additional questions or comments.
 
 ## License
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-Licensed under the [MIT](https://github.com/microsoft/vscode/blob/master/LICENSE.txt) License.
+Licensed under the [MIT](https://github.com/shadowcode/shadowcode/blob/master/LICENSE.txt) License.

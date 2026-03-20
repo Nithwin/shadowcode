@@ -5,7 +5,7 @@
 
 declare module 'vscode' {
 
-	// @kycutler https://github.com/microsoft/vscode/issues/209652
+	// @kycutler https://github.com/shadowcode/shadowcode/issues/209652
 
 	export interface MarkdownString {
 

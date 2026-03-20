@@ -32,7 +32,7 @@ const enum ShutdownConstants {
 	 * flush to hang the pty host][2] because [conhost should be hosted on another thread][3].
 	 *
 	 * [1]: https://github.com/Tyriar/node-pty/issues/72
-	 * [2]: https://github.com/microsoft/vscode/issues/71966
+	 * [2]: https://github.com/shadowcode/shadowcode/issues/71966
 	 * [3]: https://github.com/microsoft/node-pty/pull/415
 	 */
 	DataFlushTimeout = 250,
@@ -46,9 +46,9 @@ const enum Constants {
 	/**
 	 * The minimum duration between kill and spawn calls on Windows/conpty as a mitigation for a
 	 * hang issue. See:
-	 * - https://github.com/microsoft/vscode/issues/71966
-	 * - https://github.com/microsoft/vscode/issues/117956
-	 * - https://github.com/microsoft/vscode/issues/121336
+	 * - https://github.com/shadowcode/shadowcode/issues/71966
+	 * - https://github.com/shadowcode/shadowcode/issues/117956
+	 * - https://github.com/shadowcode/shadowcode/issues/121336
 	 */
 	KillSpawnThrottleInterval = 250,
 	/**
@@ -247,7 +247,7 @@ export class TerminalProcess extends Disposable implements ITerminalChildProcess
 			this._logService.trace('node-pty.node-pty.IPty#spawn native exception', err);
 			const errorMessage = err.message;
 			if (errorMessage?.includes('Cannot launch conpty')) {
-				return { message: localize('conptyLaunchFailed', "A native exception occurred during launch (Cannot launch conpty). Winpty has been removed, see {0} for more details. You can also try enabling the `{1}` setting.", 'https://code.visualstudio.com/updates/v1_109#_removal-of-winpty-support', 'terminal.integrated.windowsUseConptyDll') };
+				return { message: localize('conptyLaunchFailed', "A native exception occurred during launch (Cannot launch conpty). Winpty has been removed, see {0} for more details. You can also try enabling the `{1}` setting.", 'https://docs.shadowcode.dev/updates/v1_109#_removal-of-winpty-support', 'terminal.integrated.windowsUseConptyDll') };
 			}
 			return { message: `A native exception occurred during launch (${errorMessage})` };
 		}
@@ -433,7 +433,7 @@ export class TerminalProcess extends Disposable implements ITerminalChildProcess
 		if (this._store.isDisposed) {
 			return;
 		}
-		// HACK: The node-pty API can return undefined somehow https://github.com/microsoft/vscode/issues/222323
+		// HACK: The node-pty API can return undefined somehow https://github.com/shadowcode/shadowcode/issues/222323
 		this._currentTitle = (ptyProcess.process ?? '');
 		this._onDidChangeProperty.fire({ type: ProcessPropertyType.Title, value: this._currentTitle });
 		// If fig is installed it may change the title of the process
@@ -459,7 +459,7 @@ export class TerminalProcess extends Disposable implements ITerminalChildProcess
 			this._logService.trace('TerminalProcess#shutdown', new Error().stack?.replace(/^Error/, ''));
 		}
 		// don't force immediate disposal of the terminal processes on Windows as an additional
-		// mitigation for https://github.com/microsoft/vscode/issues/71966 which causes the pty host
+		// mitigation for https://github.com/shadowcode/shadowcode/issues/71966 which causes the pty host
 		// to become unresponsive, disconnecting all terminals across all windows.
 		if (immediate && !isWindows) {
 			this._kill();

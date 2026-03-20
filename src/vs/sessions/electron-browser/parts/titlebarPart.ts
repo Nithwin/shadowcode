@@ -52,7 +52,7 @@ export class NativeTitlebarPart extends TitlebarPart {
 		// Workaround for macOS/Electron bug where the window does not
 		// appear in the "Windows" menu if the first `document.title`
 		// matches the BrowserWindow's initial title.
-		// See: https://github.com/microsoft/vscode/issues/191288
+		// See: https://github.com/shadowcode/shadowcode/issues/191288
 		if (isMacintosh) {
 			const window = getWindow(this.element);
 			const nativeTitle = this.productService.nameLong;

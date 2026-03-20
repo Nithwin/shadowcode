@@ -6,18 +6,18 @@ Group:    Development/Tools
 Vendor:   Microsoft Corporation
 Packager: Visual Studio Code Team <vscode-linux@microsoft.com>
 License:  @@LICENSE@@
-URL:      https://code.visualstudio.com/
+URL:      https://docs.shadowcode.dev/
 Icon:     @@NAME@@.xpm
 Requires: @@DEPENDENCIES@@
 AutoReq:  0
 
 %global __provides_exclude_from ^%{_datadir}/%{name}/.*\\.so.*$
-# Disable elf stripping, refer https://github.com/microsoft/vscode/issues/223455#issuecomment-2610001754
+# Disable elf stripping, refer https://github.com/shadowcode/shadowcode/issues/223455#issuecomment-2610001754
 %global __brp_strip %{nil}
 %global __brp_strip_comment_note %{nil}
 
 %description
-Visual Studio Code is a new choice of tool that combines the simplicity of a code editor with what developers need for the core edit-build-debug cycle. See https://code.visualstudio.com/docs/setup/linux for installation instructions and FAQ.
+Visual Studio Code is a new choice of tool that combines the simplicity of a code editor with what developers need for the core edit-build-debug cycle. See https://docs.shadowcode.dev/docs/setup/linux for installation instructions and FAQ.
 
 # Don't generate build_id links to prevent conflicts when installing multiple
 # versions of VS Code alongside each other (e.g. `code` and `code-insiders`)

@@ -64,15 +64,15 @@ suite('trustedDomains', () => {
 		});
 
 		test('case normalization for github', () => {
-			assert.strictEqual(isURLDomainTrusted(URI.parse('https://github.com/Microsoft/VSCode'), ['https://github.com/microsoft/vscode']), true);
-			assert.strictEqual(isURLDomainTrusted(URI.parse('https://github.com/microsoft/vscode'), ['https://github.com/Microsoft/VSCode']), true);
+			assert.strictEqual(isURLDomainTrusted(URI.parse('https://github.com/Microsoft/VSCode'), ['https://github.com/shadowcode/shadowcode']), true);
+			assert.strictEqual(isURLDomainTrusted(URI.parse('https://github.com/shadowcode/shadowcode'), ['https://github.com/Microsoft/VSCode']), true);
 		});
 	});
 
 	suite('normalizeURL', () => {
 
 		test('normalizes github.com URLs to lowercase path', () => {
-			assert.strictEqual(normalizeURL('https://github.com/Microsoft/VSCode'), 'https://github.com/microsoft/vscode');
+			assert.strictEqual(normalizeURL('https://github.com/Microsoft/VSCode'), 'https://github.com/shadowcode/shadowcode');
 			assert.strictEqual(normalizeURL('https://github.com/OWNER/REPO'), 'https://github.com/owner/repo');
 		});
 
@@ -83,7 +83,7 @@ suite('trustedDomains', () => {
 
 		test('handles URI objects', () => {
 			const uri = URI.parse('https://github.com/Microsoft/VSCode');
-			assert.strictEqual(normalizeURL(uri), 'https://github.com/microsoft/vscode');
+			assert.strictEqual(normalizeURL(uri), 'https://github.com/shadowcode/shadowcode');
 		});
 
 		test('handles invalid URIs gracefully', () => {

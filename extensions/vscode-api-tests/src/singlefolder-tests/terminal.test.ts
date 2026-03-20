@@ -8,7 +8,7 @@ import { commands, ConfigurationTarget, Disposable, env, EnvironmentVariableMuta
 import { assertNoRpc, poll } from '../utils';
 
 // Disable terminal tests:
-// - Web https://github.com/microsoft/vscode/issues/92826
+// - Web https://github.com/shadowcode/shadowcode/issues/92826
 (env.uiKind === UIKind.Web ? suite.skip : suite)('vscode API - terminal', () => {
 	let extensionContext: ExtensionContext;
 
@@ -408,7 +408,7 @@ import { assertNoRpc, poll } from '../utils';
 		});
 
 		suite('window.onDidWriteTerminalData', () => {
-			// still flaky with retries, skipping https://github.com/microsoft/vscode/issues/193505
+			// still flaky with retries, skipping https://github.com/shadowcode/shadowcode/issues/193505
 			test.skip('should listen to all future terminal data events', function (done) {
 				// This test has been flaky in the past but it's not clear why, possibly because
 				// events from previous tests polluting the event recording in this test. Retries
@@ -562,7 +562,7 @@ import { assertNoRpc, poll } from '../utils';
 			// 	const terminal = window.createTerminal({ name: 'foo', pty });
 			// });
 
-			// TODO: Fix test, flaky in CI (local and remote) https://github.com/microsoft/vscode/issues/137155
+			// TODO: Fix test, flaky in CI (local and remote) https://github.com/shadowcode/shadowcode/issues/137155
 			test.skip('should respect dimension overrides', async () => {
 				const writeEmitter = new EventEmitter<string>();
 				const overrideDimensionsEmitter = new EventEmitter<TerminalDimensions>();

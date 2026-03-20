@@ -16,6 +16,9 @@ import { Codicon } from '../../../../base/common/codicons.js';
 import '../common/shadowAISettings.js';
 import { OllamaLanguageModelProvider } from './ollamaProvider.js';
 import { GroqLanguageModelProvider } from './groqProvider.js';
+import { OpenRouterLanguageModelProvider } from './openRouterProvider.js';
+import { HuggingFaceLanguageModelProvider } from './huggingFaceProvider.js';
+import { CustomOpenAILanguageModelProvider } from './customOpenAIProvider.js';
 import { IChatAgentService, IChatAgentImplementation, IChatAgentRequest, IChatAgentResult, IChatAgentHistoryEntry } from '../../chat/common/participants/chatAgents.js';
 import { IChatProgress } from '../../chat/common/chatService/chatService.js';
 import { CancellationToken } from '../../../../base/common/cancellation.js';
@@ -91,6 +94,9 @@ export class ShadowAIContribution extends Disposable implements IWorkbenchContri
 		// Register Language Model Providers
 		const ollamaProvider = instantiationService.createInstance(OllamaLanguageModelProvider);
 		const groqProvider = instantiationService.createInstance(GroqLanguageModelProvider);
+		const openRouterProvider = instantiationService.createInstance(OpenRouterLanguageModelProvider);
+		const huggingFaceProvider = instantiationService.createInstance(HuggingFaceLanguageModelProvider);
+		const customOpenAIProvider = instantiationService.createInstance(CustomOpenAILanguageModelProvider);
 
 		// Register vendors first
 		languageModelsService.deltaLanguageModelChatProviderDescriptors([
@@ -107,15 +113,42 @@ export class ShadowAIContribution extends Disposable implements IWorkbenchContri
 				configuration: undefined,
 				managementCommand: undefined,
 				when: undefined
+			},
+			{
+				vendor: 'openrouter',
+				displayName: 'OpenRouter',
+				configuration: undefined,
+				managementCommand: undefined,
+				when: undefined
+			},
+			{
+				vendor: 'huggingface',
+				displayName: 'Hugging Face',
+				configuration: undefined,
+				managementCommand: undefined,
+				when: undefined
+			},
+			{
+				vendor: 'custom',
+				displayName: 'Custom API',
+				configuration: undefined,
+				managementCommand: undefined,
+				when: undefined
 			}
 		], []);
 
 		this._register(languageModelsService.registerLanguageModelProvider('ollama', ollamaProvider));
 		this._register(languageModelsService.registerLanguageModelProvider('groq', groqProvider));
+		this._register(languageModelsService.registerLanguageModelProvider('openrouter', openRouterProvider));
+		this._register(languageModelsService.registerLanguageModelProvider('huggingface', huggingFaceProvider));
+		this._register(languageModelsService.registerLanguageModelProvider('custom', customOpenAIProvider));
 
 		// Force the models to be resolved immediately to populate the model picker UI
 		languageModelsService.selectLanguageModels({ vendor: 'ollama' }).catch(e => console.error(e));
 		languageModelsService.selectLanguageModels({ vendor: 'groq' }).catch(e => console.error(e));
+		languageModelsService.selectLanguageModels({ vendor: 'openrouter' }).catch(e => console.error(e));
+		languageModelsService.selectLanguageModels({ vendor: 'huggingface' }).catch(e => console.error(e));
+		languageModelsService.selectLanguageModels({ vendor: 'custom' }).catch(e => console.error(e));
 
 		// Register Default Chat Agent
 		const agentId = 'shadowcode.agent';

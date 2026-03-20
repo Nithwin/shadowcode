@@ -51,7 +51,7 @@ import product from '../../platform/product/common/product.js';
 		// macOS: behave like other native apps that have documents
 		// but can run without a document opened and allow to close
 		// the window when the last document is closed
-		// (https://github.com/microsoft/vscode/issues/126042)
+		// (https://github.com/shadowcode/shadowcode/issues/126042)
 		KeybindingsRegistry.registerKeybindingRule({
 			id: CloseWindowAction.ID,
 			weight: KeybindingWeight.WorkbenchContrib,

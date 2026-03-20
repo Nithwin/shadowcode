@@ -5,7 +5,7 @@
 
 declare module 'vscode' {
 
-	// https://github.com/microsoft/vscode/issues/47265
+	// https://github.com/shadowcode/shadowcode/issues/47265
 
 	export interface TaskPresentationOptions {
 		/**

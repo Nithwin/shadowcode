@@ -7,7 +7,7 @@
 
 declare module 'vscode' {
 
-	// https://github.com/microsoft/vscode/issues/288777 @DonJayamanne
+	// https://github.com/shadowcode/shadowcode/issues/288777 @DonJayamanne
 
 	/**
 	 * Represents a single MCP server exposed by the gateway via its own HTTP endpoint.

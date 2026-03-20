@@ -50,7 +50,7 @@ async function setupWaitTilShownListener(controller: QuickInputController): Prom
 	}
 }
 
-suite('QuickInput', () => { // https://github.com/microsoft/vscode/issues/147543
+suite('QuickInput', () => { // https://github.com/shadowcode/shadowcode/issues/147543
 	const store = ensureNoDisposablesAreLeakedInTestSuite();
 	let controller: QuickInputController;
 

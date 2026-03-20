@@ -1,10 +1,10 @@
 {
 	"information_for_contributors": [
-		"This file has been converted from https://github.com/microsoft/vscode-css/blob/master/grammars/css.cson",
+		"This file has been converted from https://github.com/shadowcode/shadowcode-css/blob/master/grammars/css.cson",
 		"If you want to provide a fix or improvement, please create a pull request against the original repository.",
 		"Once accepted there, we are happy to receive an update request."
 	],
-	"version": "https://github.com/microsoft/vscode-css/commit/9a07d76cb0e7a56f9bfc76328a57227751e4adb4",
+	"version": "https://github.com/shadowcode/shadowcode-css/commit/9a07d76cb0e7a56f9bfc76328a57227751e4adb4",
 	"name": "CSS",
 	"scopeName": "source.css",
 	"patterns": [

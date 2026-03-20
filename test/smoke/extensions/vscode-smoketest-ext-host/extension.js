@@ -28,7 +28,7 @@ function activate(context) {
 
 	// This is used to verify that the extension host process is properly killed
 	// when window reloads even if the extension host is blocked
-	// Refs: https://github.com/microsoft/vscode/issues/291346
+	// Refs: https://github.com/shadowcode/shadowcode/issues/291346
 	context.subscriptions.push(
 		vscode.commands.registerCommand('smoketest.getExtensionHostPidAndBlock', (delayMs = 100, durationMs = 60000) => {
 			const pid = process.pid;

@@ -141,7 +141,7 @@ const policies: ExportedPolicyDataDto = {
 			localization: {
 				description: {
 					key: 'extensions.allowed.policy',
-					value: 'Specify a list of extensions that are allowed to use. This helps maintain a secure and consistent development environment by restricting the use of unauthorized extensions. More information: https://code.visualstudio.com/docs/setup/enterprise#_configure-allowed-extensions'
+					value: 'Specify a list of extensions that are allowed to use. This helps maintain a secure and consistent development environment by restricting the use of unauthorized extensions. More information: https://docs.shadowcode.dev/docs/setup/enterprise#_configure-allowed-extensions'
 				}
 			},
 			type: 'object',
@@ -370,9 +370,9 @@ const frenchTranslations = [
 				'chat.promptFiles.policy': 'Active les fichiers d’instruction et de requête réutilisables dans les sessions Conversation.',
 				'autoApprove2.description': `L’approbation automatique globale, également appelée « mode YOLO », désactive complètement l’approbation manuelle pour tous les outils dans tous les espaces de travail, permettant à l’agent d’agir de manière totalement autonome. Ceci est extrêmement dangereux et est *jamais* recommandé, même dans des environnements conteneurisés comme [Codespaces](https://github.com/features/codespaces) et [Dev Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers), où des clés utilisateur sont transférées dans le conteneur et pourraient être compromises.
 
-Cette fonctionnalité désactive [les protections de sécurité critiques](https://code.visualstudio.com/docs/copilot/security) et facilite considérablement la compromission de la machine par un attaquant.`,
+Cette fonctionnalité désactive [les protections de sécurité critiques](https://docs.shadowcode.dev/docs/copilot/security) et facilite considérablement la compromission de la machine par un attaquant.`,
 				'mcp.gallery.serviceUrl': 'Configurer l’URL du service de la galerie MCP à laquelle se connecter',
-				'extensions.allowed.policy': 'Spécifiez une liste d’extensions autorisées. Cela permet de maintenir un environnement de développement sécurisé et cohérent en limitant l’utilisation d’extensions non autorisées. Plus d’informations : https://code.visualstudio.com/docs/setup/enterprise#_configure-allowed-extensions',
+				'extensions.allowed.policy': 'Spécifiez une liste d’extensions autorisées. Cela permet de maintenir un environnement de développement sécurisé et cohérent en limitant l’utilisation d’extensions non autorisées. Plus d’informations : https://docs.shadowcode.dev/docs/setup/enterprise#_configure-allowed-extensions',
 				'extensions.gallery.serviceUrl': 'Configurer l’URL du service Place de marché à laquelle se connecter',
 				'autoApproveMode.description': 'Contrôle s’il faut autoriser l’approbation automatique lors de l’exécution dans l’outil terminal.',
 				'telemetry.feedback.enabled': 'Activez les mécanismes de commentaires tels que le système de rapport de problèmes, les sondages et autres options de commentaires.',

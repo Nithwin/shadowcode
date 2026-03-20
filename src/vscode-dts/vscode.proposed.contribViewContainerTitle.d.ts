@@ -5,4 +5,4 @@
 
 // empty placeholder for view container title menus
 
-// https://github.com/microsoft/vscode/issues/200880 @roblourens
+// https://github.com/shadowcode/shadowcode/issues/200880 @roblourens

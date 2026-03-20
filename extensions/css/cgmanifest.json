@@ -4,8 +4,8 @@
 			"component": {
 				"type": "git",
 				"git": {
-					"name": "microsoft/vscode-css",
-					"repositoryUrl": "https://github.com/microsoft/vscode-css",
+					"name": "shadowcode/shadowcode-css",
+					"repositoryUrl": "https://github.com/shadowcode/shadowcode-css",
 					"commitHash": "9a07d76cb0e7a56f9bfc76328a57227751e4adb4"
 				}
 			},

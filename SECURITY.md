@@ -1,14 +1,14 @@
-<!-- BEGIN MICROSOFT SECURITY.MD V1.0.0 BLOCK -->
-
 ## Security
 
-Microsoft takes the security of our software products and services seriously, which
-includes all source code repositories in our GitHub organizations.
+Please do not report vulnerabilities in public issues.
 
-**Please do not report security vulnerabilities through public GitHub issues.**
+To report a vulnerability, use a private security advisory in your repository host or contact maintainers privately.
 
-For security reporting information, locations, contact information, and policies,
-please review the latest guidance for Microsoft repositories at
-[https://aka.ms/SECURITY.md](https://aka.ms/SECURITY.md).
+Include the following details:
 
-<!-- END MICROSOFT SECURITY.MD BLOCK -->
+- A clear vulnerability description
+- Impact and severity assessment
+- Reproduction steps or proof of concept
+- Suggested mitigation, if available
+
+Valid reports will be acknowledged and handled with responsible disclosure.

@@ -263,7 +263,7 @@ export class Menu extends ActionBar {
 		}));
 
 		this._register(addDisposableListener(scrollElement, EventType.MOUSE_UP, e => {
-			// Absorb clicks in menu dead space https://github.com/microsoft/vscode/issues/63575
+			// Absorb clicks in menu dead space https://github.com/shadowcode/shadowcode/issues/63575
 			// We do this on the scroll element so the scroll bar doesn't dismiss the menu either
 			e.preventDefault();
 		}));
@@ -1369,7 +1369,7 @@ ${formatRule(Codicon.menuSubmenu)}
 				height: 3px;
 				width: 3px;
 			}
-			/* Fix for https://github.com/microsoft/vscode/issues/103170 */
+			/* Fix for https://github.com/shadowcode/shadowcode/issues/103170 */
 			.monaco-menu .action-item .monaco-submenu {
 				z-index: 1;
 			}

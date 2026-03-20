@@ -16,7 +16,7 @@ let versionInfo: { release: string; buildNumber: number } | undefined;
  * when the application doesn't have a proper manifest. Reading from the registry
  * gives us the real version.
  *
- * See: https://github.com/microsoft/vscode/issues/197444
+ * See: https://github.com/shadowcode/shadowcode/issues/197444
  */
 export async function initWindowsVersionInfo() {
 	if (versionInfo) {

@@ -2399,7 +2399,7 @@ dependencies = [
 [[package]]
 name = "russh"
 version = "0.37.1"
-source = "git+https://github.com/microsoft/vscode-russh?branch=main#fd4f608a83753f9f3e137f95600faffede71cf65"
+source = "git+https://github.com/shadowcode/shadowcode-russh?branch=main#fd4f608a83753f9f3e137f95600faffede71cf65"
 dependencies = [
  "async-trait",
  "bitflags 1.3.2",
@@ -2428,7 +2428,7 @@ dependencies = [
 [[package]]
 name = "russh-cryptovec"
 version = "0.7.0"
-source = "git+https://github.com/microsoft/vscode-russh?branch=main#fd4f608a83753f9f3e137f95600faffede71cf65"
+source = "git+https://github.com/shadowcode/shadowcode-russh?branch=main#fd4f608a83753f9f3e137f95600faffede71cf65"
 dependencies = [
  "libc",
  "winapi",
@@ -2437,7 +2437,7 @@ dependencies = [
 [[package]]
 name = "russh-keys"
 version = "0.37.1"
-source = "git+https://github.com/microsoft/vscode-russh?branch=main#fd4f608a83753f9f3e137f95600faffede71cf65"
+source = "git+https://github.com/shadowcode/shadowcode-russh?branch=main#fd4f608a83753f9f3e137f95600faffede71cf65"
 dependencies = [
  "bit-vec",
  "byteorder",

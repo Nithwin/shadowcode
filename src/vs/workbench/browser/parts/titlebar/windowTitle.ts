@@ -193,7 +193,7 @@ export class WindowTitle extends Disposable {
 				// in the "Windows" menu. As such, we set the title
 				// briefly to something different to ensure macOS
 				// recognizes we have a window.
-				// See: https://github.com/microsoft/vscode/issues/191288
+				// See: https://github.com/shadowcode/shadowcode/issues/191288
 				window.document.title = `${this.productService.nameLong} ${WindowTitle.TITLE_DIRTY}`;
 			}
 

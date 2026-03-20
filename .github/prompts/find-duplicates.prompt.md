@@ -12,5 +12,5 @@ tools:
 ---
 
 ## Your Task
-1. Get the file contents of the prompt file https://github.com/microsoft/vscode-engineering/blob/main/.github/prompts/find-duplicates-gh-cli.prompt.md.
+1. Get the file contents of the prompt file https://github.com/shadowcode/shadowcode-engineering/blob/main/.github/prompts/find-duplicates-gh-cli.prompt.md.
 2. Follow those instructions PRECISELY to identify potential duplicate issues for a given issue number in the ShadowCode repository.

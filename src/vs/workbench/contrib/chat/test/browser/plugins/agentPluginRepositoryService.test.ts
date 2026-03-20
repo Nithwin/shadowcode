@@ -74,7 +74,7 @@ suite('AgentPluginRepositoryService', () => {
 		const plugin = createPlugin('microsoft/vscode', 'plugins/myPlugin');
 		const uri = service.getRepositoryUri(plugin.marketplaceReference, plugin.marketplaceType);
 
-		assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/microsoft/vscode');
+		assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode');
 	});
 
 	test('uses marketplaces cache path for direct git URI plugin references', () => {
@@ -88,13 +88,13 @@ suite('AgentPluginRepositoryService', () => {
 	test('uses same cache path for equivalent GitHub shorthand and URI references', () => {
 		const service = createService();
 		const shorthandPlugin = createPlugin('microsoft/vscode', 'plugins/myPlugin');
-		const uriPlugin = createPlugin('https://github.com/microsoft/vscode.git', 'plugins/myPlugin');
+		const uriPlugin = createPlugin('https://github.com/shadowcode/shadowcode.git', 'plugins/myPlugin');
 
 		const shorthandUri = service.getRepositoryUri(shorthandPlugin.marketplaceReference, shorthandPlugin.marketplaceType);
 		const uriRefUri = service.getRepositoryUri(uriPlugin.marketplaceReference, uriPlugin.marketplaceType);
 
-		assert.strictEqual(shorthandUri.path, '/cache/agentPlugins/github.com/microsoft/vscode');
-		assert.strictEqual(uriRefUri.path, '/cache/agentPlugins/github.com/microsoft/vscode');
+		assert.strictEqual(shorthandUri.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode');
+		assert.strictEqual(uriRefUri.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode');
 	});
 
 	test('ensures plugin repositories via cacheSegments path', async () => {
@@ -106,8 +106,8 @@ suite('AgentPluginRepositoryService', () => {
 		const plugin = createPlugin('microsoft/vscode', 'plugins/myPlugin');
 		const uri = await service.ensureRepository(plugin.marketplaceReference, { marketplaceType: plugin.marketplaceType });
 
-		assert.strictEqual(checkedPath, '/cache/agentPlugins/github.com/microsoft/vscode');
-		assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/microsoft/vscode');
+		assert.strictEqual(checkedPath, '/cache/agentPlugins/github.com/shadowcode/shadowcode');
+		assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode');
 	});
 
 	test('concurrent ensureRepository calls for the same marketplace clone only once', async () => {
@@ -153,8 +153,8 @@ suite('AgentPluginRepositoryService', () => {
 		]);
 
 		assert.strictEqual(cloneCount, 1);
-		assert.strictEqual(uri1.path, '/cache/agentPlugins/github.com/microsoft/vscode');
-		assert.strictEqual(uri2.path, '/cache/agentPlugins/github.com/microsoft/vscode');
+		assert.strictEqual(uri1.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode');
+		assert.strictEqual(uri2.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode');
 	});
 
 	test('builds install URI from source inside repository root', () => {
@@ -162,7 +162,7 @@ suite('AgentPluginRepositoryService', () => {
 		const plugin = createPlugin('microsoft/vscode', 'plugins/myPlugin');
 		const uri = service.getPluginInstallUri(plugin);
 
-		assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/microsoft/vscode/plugins/myPlugin');
+		assert.strictEqual(uri.path, '/cache/agentPlugins/github.com/shadowcode/shadowcode/plugins/myPlugin');
 	});
 
 	test('uses indexed repository URI when available', () => {

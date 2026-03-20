@@ -49,7 +49,7 @@ function getParams(type: string): Params[] {
 					operationSetCode: 'SigntoolSign',
 					parameters: [
 						{ parameterName: 'OpusName', parameterValue: 'VS Code' },
-						{ parameterName: 'OpusInfo', parameterValue: 'https://code.visualstudio.com/' },
+						{ parameterName: 'OpusInfo', parameterValue: 'https://docs.shadowcode.dev/' },
 						{ parameterName: 'Append', parameterValue: '/as' },
 						{ parameterName: 'FileDigest', parameterValue: '/fd "SHA256"' },
 						{ parameterName: 'PageHash', parameterValue: '/NPH' },
@@ -75,7 +75,7 @@ function getParams(type: string): Params[] {
 					operationSetCode: 'SigntoolSign',
 					parameters: [
 						{ parameterName: 'OpusName', parameterValue: 'VS Code' },
-						{ parameterName: 'OpusInfo', parameterValue: 'https://code.visualstudio.com/' },
+						{ parameterName: 'OpusInfo', parameterValue: 'https://docs.shadowcode.dev/' },
 						{ parameterName: 'FileDigest', parameterValue: '/fd "SHA256"' },
 						{ parameterName: 'PageHash', parameterValue: '/NPH' },
 						{ parameterName: 'TimeStamp', parameterValue: '/tr "http://rfc3161.gtm.corp.microsoft.com/TSS/HttpTspServer" /td sha256' }

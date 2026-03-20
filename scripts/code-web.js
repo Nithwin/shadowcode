@@ -130,7 +130,7 @@ async function downloadPlaygroundFile(fileName, httpsLocation, destinationRoot) 
 
 async function ensureWebDevExtensions(verbose) {
 
-	// Playground (https://github.com/microsoft/vscode-web-playground)
+	// Playground (https://github.com/shadowcode/shadowcode-web-playground)
 	const webDevPlaygroundRoot = path.join(WEB_DEV_EXTENSIONS_ROOT, 'vscode-web-playground');
 	const webDevPlaygroundExists = await directoryExists(webDevPlaygroundRoot);
 

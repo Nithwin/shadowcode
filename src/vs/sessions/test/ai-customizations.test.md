@@ -52,7 +52,7 @@ This tests the transition from the empty state to having an active workspace sel
 
 - On 'New Session' screen (Scenario 1 completed)
 - A git repository, cloned on the machine, is available to select
-  - For this test use `microsoft/vscode` cloned to a test folder
+  - For this test use `shadowcode/shadowcode` cloned to a test folder
 
 #### Actions
 
@@ -97,7 +97,7 @@ This tests the transition from the empty state to having an active workspace sel
 #### Preconditions
 
 - Active session with a worktree checked out (task started and running)
-- Use the same repository as Scenario 2 (`microsoft/vscode`)
+- Use the same repository as Scenario 2 (`shadowcode/shadowcode`)
 
 #### Actions
 

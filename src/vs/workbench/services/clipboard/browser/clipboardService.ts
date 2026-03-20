@@ -55,7 +55,7 @@ export class BrowserClipboardService extends BaseBrowserClipboardService {
 		} catch (error) {
 			return new Promise<string>(resolve => {
 
-				// Inform user about permissions problem (https://github.com/microsoft/vscode/issues/112089)
+				// Inform user about permissions problem (https://github.com/shadowcode/shadowcode/issues/112089)
 				const listener = new DisposableStore();
 				const handle = this.notificationService.prompt(
 					Severity.Error,

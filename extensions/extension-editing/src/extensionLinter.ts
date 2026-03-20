@@ -186,7 +186,7 @@ export class ExtensionLinter {
 							const diagnostic = new Diagnostic(new Range(start, end), starActivation, DiagnosticSeverity.Information);
 							diagnostic.code = {
 								value: 'star-activation',
-								target: Uri.parse('https://code.visualstudio.com/api/references/activation-events#Start-up'),
+								target: Uri.parse('https://docs.shadowcode.dev/api/references/activation-events#Start-up'),
 							};
 							diagnostics.push(diagnostic);
 						}
@@ -261,7 +261,7 @@ export class ExtensionLinter {
 				const diagnostic = new Diagnostic(new Range(start, end), errMsg, DiagnosticSeverity.Error);
 				diagnostic.code = {
 					value: 'See docs',
-					target: Uri.parse('https://code.visualstudio.com/api/references/when-clause-contexts'),
+					target: Uri.parse('https://docs.shadowcode.dev/api/references/when-clause-contexts'),
 				};
 				diagnostics.push(diagnostic);
 			}

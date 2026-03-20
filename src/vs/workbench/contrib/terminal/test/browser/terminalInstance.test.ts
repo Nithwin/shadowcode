@@ -348,8 +348,8 @@ suite('Workbench - TerminalInstance', () => {
 		});
 		test('should format conpty launch failure', () => {
 			deepStrictEqual(
-				parseExitResult({ message: 'A native exception occurred during launch (Cannot launch conpty). Winpty has been removed, see https://code.visualstudio.com/updates/v1_109#_removal-of-winpty-support for more details. You can also try enabling the `terminal.integrated.windowsUseConptyDll` setting.' }, {}, ProcessState.KilledDuringLaunch, undefined),
-				{ code: undefined, message: `The terminal process failed to launch: A native exception occurred during launch (Cannot launch conpty). Winpty has been removed, see https://code.visualstudio.com/updates/v1_109#_removal-of-winpty-support for more details. You can also try enabling the \`terminal.integrated.windowsUseConptyDll\` setting..` }
+				parseExitResult({ message: 'A native exception occurred during launch (Cannot launch conpty). Winpty has been removed, see https://docs.shadowcode.dev/updates/v1_109#_removal-of-winpty-support for more details. You can also try enabling the `terminal.integrated.windowsUseConptyDll` setting.' }, {}, ProcessState.KilledDuringLaunch, undefined),
+				{ code: undefined, message: `The terminal process failed to launch: A native exception occurred during launch (Cannot launch conpty). Winpty has been removed, see https://docs.shadowcode.dev/updates/v1_109#_removal-of-winpty-support for more details. You can also try enabling the \`terminal.integrated.windowsUseConptyDll\` setting..` }
 			);
 		});
 		test('should format generic failures', () => {

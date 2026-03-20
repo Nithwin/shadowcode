@@ -322,10 +322,10 @@ export class ViewportRenderStrategy extends BaseRenderStrategy {
 										const parsedValue = parseCssFontWeight(value);
 										if (parsedValue >= 400) {
 											decorationStyleSetBold = true;
-											// TODO: Set bold (https://github.com/microsoft/vscode/issues/237584)
+											// TODO: Set bold (https://github.com/shadowcode/shadowcode/issues/237584)
 										} else {
 											decorationStyleSetBold = false;
-											// TODO: Set normal (https://github.com/microsoft/vscode/issues/237584)
+											// TODO: Set normal (https://github.com/shadowcode/shadowcode/issues/237584)
 										}
 										break;
 									}

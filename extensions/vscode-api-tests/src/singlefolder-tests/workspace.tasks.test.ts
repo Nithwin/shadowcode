@@ -8,7 +8,7 @@ import { commands, ConfigurationTarget, CustomExecution, Disposable, env, Event,
 import { assertNoRpc } from '../utils';
 
 // Disable tasks tests:
-// - Web https://github.com/microsoft/vscode/issues/90528
+// - Web https://github.com/shadowcode/shadowcode/issues/90528
 ((env.uiKind === UIKind.Web) ? suite.skip : suite)('vscode API - tasks', () => {
 
 	suiteSetup(async () => {

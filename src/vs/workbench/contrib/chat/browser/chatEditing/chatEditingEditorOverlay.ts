@@ -413,7 +413,7 @@ export class ChatEditingEditorOverlay implements IWorkbenchContribution {
 			for (const group of groups) {
 
 				if (!(group instanceof EditorGroupView)) {
-					// TODO@jrieken better with https://github.com/microsoft/vscode/tree/ben/layout-group-container
+					// TODO@jrieken better with https://github.com/shadowcode/shadowcode/tree/ben/layout-group-container
 					continue;
 				}
 

@@ -131,7 +131,7 @@
           "type": "object",
           "default": {
             "https://schemastore.azurewebsites.net/": true,
-            "https://raw.githubusercontent.com/microsoft/vscode/": true,
+            "https://raw.githubusercontent.com/shadowcode/shadowcode/": true,
             "https://raw.githubusercontent.com/devcontainers/spec/": true,
             "https://www.schemastore.org/": true,
             "https://json.schemastore.org/": true,
@@ -197,6 +197,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/microsoft/vscode.git"
+    "url": "https://github.com/shadowcode/shadowcode.git"
   }
 }

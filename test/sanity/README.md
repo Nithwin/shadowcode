@@ -6,7 +6,7 @@ Automated end-to-end release sanity tests for published VS Code builds.
 These tests verify critical functionality across different platforms and installation methods,
 ensuring that published builds meet quality standards before reaching end users.
 
-See [Sanity Check wiki page](https://github.com/microsoft/vscode/wiki/Sanity-Check) for more details on sanity testing.
+See [Sanity Check wiki page](https://github.com/shadowcode/shadowcode/wiki/Sanity-Check) for more details on sanity testing.
 
 ## Usage
 
@@ -145,12 +145,12 @@ For the following platforms only downloads are validated (and not install/runtim
 
 The following public documentation pages provide details on end-user VS Code setup scenarios.
 
-- [Download VS Code](https://code.visualstudio.com/Download)
-- [Requirements](https://code.visualstudio.com/docs/supporting/requirements)
-- [Setup Overview](https://code.visualstudio.com/docs/setup/setup-overview)
-- [Linux Setup](https://code.visualstudio.com/docs/setup/linux)
-- [macOS Setup](https://code.visualstudio.com/docs/setup/mac)
-- [Windows Setup](https://code.visualstudio.com/docs/setup/windows)
-- [Portable Mode](https://code.visualstudio.com/docs/editor/portable)
-- [VS Code Server](https://code.visualstudio.com/docs/remote/vscode-server)
-- [Developing in WSL](https://code.visualstudio.com/docs/remote/wsl)
+- [Download VS Code](https://docs.shadowcode.dev/Download)
+- [Requirements](https://docs.shadowcode.dev/docs/supporting/requirements)
+- [Setup Overview](https://docs.shadowcode.dev/docs/setup/setup-overview)
+- [Linux Setup](https://docs.shadowcode.dev/docs/setup/linux)
+- [macOS Setup](https://docs.shadowcode.dev/docs/setup/mac)
+- [Windows Setup](https://docs.shadowcode.dev/docs/setup/windows)
+- [Portable Mode](https://docs.shadowcode.dev/docs/editor/portable)
+- [VS Code Server](https://docs.shadowcode.dev/docs/remote/vscode-server)
+- [Developing in WSL](https://docs.shadowcode.dev/docs/remote/wsl)

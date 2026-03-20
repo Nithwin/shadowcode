@@ -116,7 +116,7 @@ node .github/skills/azure-pipelines/azure-pipeline.ts queue --parameter "VSCODE_
 | `VSCODE_BUILD_MACOS_ARM64` | boolean | `true` | `true`, `false` | Build macOS arm64 |
 | `VSCODE_BUILD_MACOS_UNIVERSAL` | boolean | `true` | `true`, `false` | Build macOS universal (requires both macOS arches) |
 | `VSCODE_BUILD_WEB` | boolean | `true` | `true`, `false` | Build Web artifacts |
-| `VSCODE_PUBLISH` | boolean | `true` | `true`, `false` | Publish to builds.code.visualstudio.com |
+| `VSCODE_PUBLISH` | boolean | `true` | `true`, `false` | Publish to builds.shadowcode.dev |
 | `VSCODE_RELEASE` | boolean | `false` | `true`, `false` | Trigger release flow if successful |
 | `VSCODE_STEP_ON_IT` | boolean | `false` | `true`, `false` | Skip tests |
 

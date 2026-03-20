@@ -16,4 +16,4 @@ These instructions contain valuable information about:
 
 Reading these instructions before writing Kusto queries will help you write more accurate and efficient queries, avoid common pitfalls, and leverage existing knowledge about ShadowCode's telemetry infrastructure.
 
-(Make sure to have the main branch of vscode-tools up to date in case there are problems and the repository cloned from https://github.com/microsoft/vscode-tools).
+(Make sure to have the main branch of vscode-tools up to date in case there are problems and the repository cloned from https://github.com/shadowcode/shadowcode-tools).

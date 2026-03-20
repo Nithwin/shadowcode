@@ -108,7 +108,7 @@ export class QuickInputController extends Disposable {
 				// The window this quick input is contained in is about to
 				// close, so we have to make sure to reparent it back to an
 				// existing parent to not loose functionality.
-				// (https://github.com/microsoft/vscode/issues/195870)
+				// (https://github.com/shadowcode/shadowcode/issues/195870)
 				this.reparentUI(this.layoutService.mainContainer);
 				this.layout(this.layoutService.mainContainerDimension, this.layoutService.mainContainerOffset.quickPickTop);
 			}
@@ -255,12 +255,12 @@ export class QuickInputController extends Disposable {
 		this._register(list.onChangedCheckedCount(c => {
 			// TODO@TylerLeonhardt: Without this setTimeout, the screen reader will not read out
 			// the final count of checked items correctly. Investigate a better way
-			// to do this. ref https://github.com/microsoft/vscode/issues/258617
+			// to do this. ref https://github.com/shadowcode/shadowcode/issues/258617
 			setTimeout0(() => count.setCount(c));
 		}));
 		this._register(list.onLeave(() => {
 			// Defer to avoid the input field reacting to the triggering key.
-			// TODO@TylerLeonhardt https://github.com/microsoft/vscode/issues/203675
+			// TODO@TylerLeonhardt https://github.com/shadowcode/shadowcode/issues/203675
 			setTimeout(() => {
 				if (!this.controller) {
 					return;
@@ -293,7 +293,7 @@ export class QuickInputController extends Disposable {
 		}));
 		this._register(tree.onLeave(() => {
 			// Defer to avoid the input field reacting to the triggering key.
-			// TODO@TylerLeonhardt https://github.com/microsoft/vscode/issues/203675
+			// TODO@TylerLeonhardt https://github.com/shadowcode/shadowcode/issues/203675
 			setTimeout(() => {
 				if (!this.controller) {
 					return;
@@ -344,7 +344,7 @@ export class QuickInputController extends Disposable {
 			// change in the list.
 			// Don't remove aria-activedescendant when only modifier keys are pressed
 			// to prevent screen reader re-announcements when users press Ctrl to silence speech.
-			// See: https://github.com/microsoft/vscode/issues/271032
+			// See: https://github.com/shadowcode/shadowcode/issues/271032
 			if (!isModifierKey(e.keyCode)) {
 				inputBox.removeAttribute('aria-activedescendant');
 				// Reset ARIA popup mode to allow normal text editing with arrow keys

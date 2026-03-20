@@ -510,7 +510,7 @@ export class EditorPart extends Part<IEditorPartMemento> implements IEditorPart,
 				layout.orientation,
 				this.isTwoDimensionalGrid() ?
 					this.gridWidget.orientation :			// preserve original orientation for 2-dimensional grids
-					orthogonal(this.gridWidget.orientation) // otherwise flip (fix https://github.com/microsoft/vscode/issues/52975)
+					orthogonal(this.gridWidget.orientation) // otherwise flip (fix https://github.com/shadowcode/shadowcode/issues/52975)
 			),
 			groups: layout.groups
 		});
@@ -904,7 +904,7 @@ export class EditorPart extends Part<IEditorPartMemento> implements IEditorPart,
 					// Do not configure an `index` for editors that are sticky in
 					// the target, otherwise there is a chance of losing that state
 					// when the editor is moved.
-					// See https://github.com/microsoft/vscode/issues/239549
+					// See https://github.com/shadowcode/shadowcode/issues/239549
 					targetView.isSticky(editor) ||
 					// Do not configure an `index` when we are explicitly instructed
 					options?.preserveExistingIndex

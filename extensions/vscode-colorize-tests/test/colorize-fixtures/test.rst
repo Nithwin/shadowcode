@@ -75,9 +75,9 @@ A `fancier link`_ .
 .. _fancier link: https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html
 
 
-An `inline link <https://code.visualstudio.com>`__ .
+An `inline link <https://docs.shadowcode.dev>`__ .
 
-.. image:: https://code.visualstudio.com/assets/images/code-stable.png
+.. image:: https://docs.shadowcode.dev/assets/images/code-stable.png
 
 .. function: example()
    :module: mod
