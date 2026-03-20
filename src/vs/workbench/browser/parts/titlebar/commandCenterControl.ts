@@ -140,23 +140,18 @@ class CommandCenterCenterViewItem extends BaseActionViewItem {
 
 						override render(container: HTMLElement): void {
 							super.render(container);
+							container.classList.add('command-center-center');
 							container.classList.toggle('command-center-quick-pick');
+
 							container.role = 'button';
 							container.setAttribute('aria-description', this.getTooltip());
-							const action = this.action;
 
-							// icon (search)
-							const searchIcon = document.createElement('span');
-							searchIcon.ariaHidden = 'true';
-							searchIcon.className = action.class ?? '';
-							searchIcon.classList.add('search-icon');
 
-							// label: just workspace name and optional decorations
 							const label = this._getLabel();
 							const labelElement = document.createElement('span');
 							labelElement.classList.add('search-label');
 							labelElement.textContent = label;
-							reset(container, searchIcon, labelElement);
+							reset(container, labelElement);
 
 							const hover = this._store.add(that._hoverService.setupManagedHover(that._hoverDelegate, container, this.getTooltip()));
 
@@ -181,15 +176,20 @@ class CommandCenterCenterViewItem extends BaseActionViewItem {
 
 						private _getLabel(): string {
 							const { prefix, suffix } = that._windowTitle.getTitleDecorations();
-							let label = that._windowTitle.workspaceName;
-							if (that._windowTitle.isCustomTitleFormat()) {
-								label = that._windowTitle.getWindowTitle();
-							} else if (that._editorGroupService.partOptions.showTabs === 'none') {
-								label = that._windowTitle.fileName ?? label;
+							let label = "";
+							const workspace = that._windowTitle.workspaceName;
+							const file = that._windowTitle.fileName;
+							
+							if (workspace && file) {
+								label = `${workspace} - ShadowCode - ${file}`;
+							} else if (workspace) {
+								label = `${workspace} - ShadowCode`;
+							} else if (file) {
+								label = `ShadowCode - ${file}`;
+							} else {
+								label = "ShadowCode";
 							}
-							if (!label) {
-								label = localize('label.dfl', "Search");
-							}
+
 							if (prefix) {
 								label = localize('label1', "{0} {1}", prefix, label);
 							}
@@ -199,6 +199,7 @@ class CommandCenterCenterViewItem extends BaseActionViewItem {
 
 							return label.replaceAll(/\r\n|\r|\n/g, '\u23CE');
 						}
+
 					});
 				}
 			});
@@ -222,8 +223,8 @@ class CommandCenterCenterViewItem extends BaseActionViewItem {
 		// tooltip: full windowTitle
 		const kb = this._keybindingService.lookupKeybinding(this.action.id)?.getLabel();
 		const title = kb
-			? localize('title', "Search {0} ({1}) \u2014 {2}", this._windowTitle.workspaceName, kb, this._windowTitle.value)
-			: localize('title2', "Search {0} \u2014 {1}", this._windowTitle.workspaceName, this._windowTitle.value);
+			? localize('title', "ShadowCode {0} ({1}) \u2014 {2}", this._windowTitle.workspaceName, kb, this._windowTitle.value)
+			: localize('title2', "ShadowCode {0} \u2014 {1}", this._windowTitle.workspaceName, this._windowTitle.value);
 
 		return title;
 	}

@@ -68,7 +68,7 @@ export class CommandsQuickAccessProvider extends AbstractEditorCommandsQuickAcce
 		@IEditorService private readonly editorService: IEditorService,
 		@IMenuService private readonly menuService: IMenuService,
 		@IExtensionService extensionService: IExtensionService,
-		@IInstantiationService instantiationService: IInstantiationService,
+		@IInstantiationService private readonly instantiationService: IInstantiationService,
 		@IKeybindingService keybindingService: IKeybindingService,
 		@ICommandService commandService: ICommandService,
 		@ITelemetryService telemetryService: ITelemetryService,
@@ -78,7 +78,6 @@ export class CommandsQuickAccessProvider extends AbstractEditorCommandsQuickAcce
 		@IPreferencesService private readonly preferencesService: IPreferencesService,
 		@IProductService private readonly productService: IProductService,
 		@IAiRelatedInformationService private readonly aiRelatedInformationService: IAiRelatedInformationService,
-		@IChatAgentService private readonly chatAgentService: IChatAgentService,
 	) {
 		super({
 			showAlias: !Language.isDefaultVariant(),
@@ -170,7 +169,7 @@ export class CommandsQuickAccessProvider extends AbstractEditorCommandsQuickAcce
 
 		// If enabled in settings, add "Ask in Chat" option after a separator (if needed).
 		if (this.configuration.showAskInChat) {
-			const defaultAgent = this.chatAgentService.getDefaultAgent(ChatAgentLocation.Chat);
+			const defaultAgent = this.getDefaultChatAgent();
 			if (defaultAgent) {
 				if (picksSoFar.length || additionalPicks.length) {
 					additionalPicks.push({
@@ -195,6 +194,15 @@ export class CommandsQuickAccessProvider extends AbstractEditorCommandsQuickAcce
 		}
 
 		return additionalPicks;
+	}
+
+	private getDefaultChatAgent() {
+		try {
+			return this.instantiationService.invokeFunction(accessor => accessor.get(IChatAgentService).getDefaultAgent(ChatAgentLocation.Chat));
+		} catch {
+			// Chat contribution can be disabled in some product variants.
+			return undefined;
+		}
 	}
 
 	private async getRelatedInformationPicks(allPicks: ICommandQuickPick[], picksSoFar: ICommandQuickPick[], filter: string, token: CancellationToken) {

@@ -16,7 +16,20 @@
     "statusBar.foreground": "#e2e8f0",
     "button.background": "#7c3aed",
     "button.foreground": "#ffffff",
-    "errorForeground": "#f87171"
+    "errorForeground": "#f87171",
+    "commandCenter.background": "#0a0a0f",
+    "commandCenter.foreground": "#cbd5e1",
+    "commandCenter.border": "#1e1e2e",
+    "commandCenter.activeBackground": "#1e1e2e",
+    "commandCenter.activeForeground": "#7c3aed",
+    "commandCenter.activeBorder": "#7c3aed",
+    "editorGroupHeader.tabsBackground": "#080810",
+    "tab.activeBackground": "#1e1e2e",
+    "tab.activeForeground": "#7c3aed",
+    "tab.activeBorder": "#7c3aed",
+    "tab.inactiveBackground": "#0a0a0f",
+    "tab.inactiveForeground": "#64748b"
+
   },
   "tokenColors": [
     {

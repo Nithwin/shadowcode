@@ -14,7 +14,7 @@ import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.j
 import { EditorResourceAccessor, Verbosity, SideBySideEditor } from '../../../common/editor.js';
 import { IBrowserWorkbenchEnvironmentService } from '../../../services/environment/browser/environmentService.js';
 import { IWorkspaceContextService, WorkbenchState, IWorkspaceFolder } from '../../../../platform/workspace/common/workspace.js';
-import { isWindows, isWeb, isMacintosh, isNative } from '../../../../base/common/platform.js';
+import { isWindows, isWeb, isMacintosh } from '../../../../base/common/platform.js';
 import { URI } from '../../../../base/common/uri.js';
 import { trim } from '../../../../base/common/strings.js';
 import { template } from '../../../../base/common/labels.js';
@@ -38,18 +38,7 @@ const enum WindowSettingNames {
 	title = 'window.title',
 }
 
-export const defaultWindowTitle = (() => {
-	if (isMacintosh && isNative) {
-		return '${activeEditorShort}${separator}${rootName}${separator}${profileName}'; // macOS has native dirty indicator
-	}
-
-	const base = '${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}${appName}';
-	if (isWeb) {
-		return base + '${separator}${remoteName}'; // Web: always show remote name
-	}
-
-	return base;
-})();
+export const defaultWindowTitle = '${dirty}${appName}';
 export const defaultWindowTitleSeparator = isMacintosh ? ' \u2014 ' : ' - ';
 
 export class WindowTitle extends Disposable {

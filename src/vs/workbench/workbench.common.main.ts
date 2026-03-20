@@ -92,6 +92,7 @@ import './services/extensionRecommendations/common/workspaceExtensionsConfig.js'
 import './services/extensionManagement/common/extensionFeaturesManagemetService.js';
 import './services/notification/common/notificationService.js';
 import './services/userDataSync/common/userDataSyncUtil.js';
+import './services/userDataSync/browser/userDataSyncEnablementService.js';
 import './services/userDataProfile/browser/userDataProfileImportExportService.js';
 import './services/userDataProfile/browser/userDataProfileManagement.js';
 import './services/userDataProfile/common/remoteUserDataProfiles.js';
@@ -134,6 +135,7 @@ import './services/dataChannel/browser/dataChannelService.js';
 import './services/inlineCompletions/common/inlineCompletionsUnification.js';
 import './services/chat/common/chatEntitlementService.js';
 import './services/log/common/defaultLogLevels.js';
+import './contrib/editTelemetry/browser/editTelemetry.contribution.js';
 
 import { InstantiationType, registerSingleton } from '../platform/instantiation/common/extensions.js';
 import { GlobalExtensionEnablementService } from '../platform/extensionManagement/common/extensionEnablementService.js';
@@ -411,5 +413,23 @@ import './contrib/dropOrPasteInto/browser/dropOrPasteInto.contribution.js';
 
 // Opener
 import './contrib/opener/browser/opener.contribution.js';
+
+// MCP (browser) — must come before Chat since chat depends on IMcpService
+import './contrib/mcp/browser/mcp.contribution.js';
+
+// Chat
+import './contrib/chat/browser/chat.contribution.js';
+
+// Chat Sessions
+import './contrib/chat/browser/chatSessions/chatSessions.contribution.js';
+
+// Inline Chat
+import './contrib/inlineChat/browser/inlineChat.contribution.js';
+
+// User Data Sync
+import './contrib/userDataSync/browser/userDataSync.contribution.js';
+
+// Shadow AI
+import './contrib/shadowAI/browser/shadowAI.contribution.js';
 
 //#endregion

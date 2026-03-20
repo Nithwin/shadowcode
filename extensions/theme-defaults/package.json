@@ -86,7 +86,10 @@
         "label": "%minimalIconThemeLabel%",
         "path": "./fileicons/vs_minimal-icon-theme.json"
       }
-    ]
+    ],
+    "configurationDefaults": {
+      "workbench.iconTheme": "material-icon-theme"
+    }
   },
   "repository": {
     "type": "git",
