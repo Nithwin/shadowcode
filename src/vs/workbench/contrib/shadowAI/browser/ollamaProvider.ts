@@ -13,6 +13,8 @@ import { ILanguageModelChatProvider, IChatMessage, ILanguageModelChatRequestOpti
 import { ExtensionIdentifier } from '../../../../platform/extensions/common/extensions.js';
 import { ShadowAIConfiguration } from '../common/shadowAISettings.js';
 import { IOllamaTagsResponse, IOllamaChatResponseDelta, IOllamaChatRequest, IOllamaModel } from '../common/ollamaTypes.js';
+import { isShadowAIProviderEnabled } from '../common/shadowAIProviderAccess.js';
+import { ShadowAIModelCache } from '../common/shadowAIModelCache.js';
 
 import { AsyncIterableSource } from '../../../../base/common/async.js';
 import { listenStream } from '../../../../base/common/stream.js';
@@ -23,6 +25,7 @@ export class OllamaLanguageModelProvider implements ILanguageModelChatProvider, 
 	readonly onDidChange: Event<void> = this._onDidChange.event;
 
 	private readonly _store = new DisposableStore();
+	private readonly _modelInfoCache = new ShadowAIModelCache<ILanguageModelChatMetadataAndIdentifier[]>();
 
 	constructor(
 		@IRequestService private readonly _requestService: IRequestService,
@@ -36,51 +39,64 @@ export class OllamaLanguageModelProvider implements ILanguageModelChatProvider, 
 	}
 
 	async provideLanguageModelChatInfo(options: ILanguageModelChatInfoOptions, token: CancellationToken): Promise<ILanguageModelChatMetadataAndIdentifier[]> {
-		const endpoint = this._configurationService.getValue<string>(ShadowAIConfiguration.OllamaEndpoint);
-		try {
-			const context = await this._requestService.request({
-				url: `${endpoint}/api/tags`,
-				type: 'GET',
-				callSite: 'ollama'
-			}, token);
-
-			if (context.res.statusCode !== 200) {
-				this._logService.error('[Ollama] Failed to fetch models', context.res.statusCode);
-				return [];
-			}
-
-			const tags = await asJson<IOllamaTagsResponse>(context);
-			if (!tags || !tags.models) {
-				return [];
-			}
-
-			return tags.models.map((m: IOllamaModel) => ({
-				identifier: `ollama:${m.name}`,
-				metadata: {
-					extension: new ExtensionIdentifier('shadowcode.ollama'),
-					name: m.name,
-					id: `ollama:${m.name}`,
-					vendor: 'ollama',
-					version: m.details.parameter_size || 'latest',
-					family: m.details.family || 'ollama',
-					maxInputTokens: 4096, // Ollama default
-					maxOutputTokens: 4096,
-					isDefaultForLocation: {},
-					isUserSelectable: true,
-					modelPickerCategory: { label: 'Ollama (Local)', order: 1 },
-					capabilities: {
-						agentMode: true,
-						toolCalling: true
-					}
-				}
-			}));
-		} catch (e) {
-			this._logService.error('[Ollama] Error providing models', e);
+		if (!isShadowAIProviderEnabled(this._configurationService, 'ollama')) {
 			return [];
 		}
+
+		const endpoint = this._configurationService.getValue<string>(ShadowAIConfiguration.OllamaEndpoint);
+		const ttlMs = this._configurationService.getValue<number>(ShadowAIConfiguration.ModelListCacheTtlMs) ?? 30000;
+		const cacheKey = `endpoint=${endpoint}`;
+
+		return this._modelInfoCache.getOrCompute(cacheKey, ttlMs, async () => {
+			try {
+				const context = await this._requestService.request({
+					url: `${endpoint}/api/tags`,
+					type: 'GET',
+					callSite: 'ollama'
+				}, token);
+
+				if (context.res.statusCode !== 200) {
+					this._logService.error('[Ollama] Failed to fetch models', context.res.statusCode);
+					return [];
+				}
+
+				const tags = await asJson<IOllamaTagsResponse>(context);
+				if (!tags || !tags.models) {
+					return [];
+				}
+
+				return tags.models.map((m: IOllamaModel) => ({
+					identifier: `ollama:${m.name}`,
+					metadata: {
+						extension: new ExtensionIdentifier('shadowcode.ollama'),
+						name: m.name,
+						id: `ollama:${m.name}`,
+						vendor: 'ollama',
+						version: m.details.parameter_size || 'latest',
+						family: m.details.family || 'ollama',
+						maxInputTokens: 4096, // Ollama default
+						maxOutputTokens: 4096,
+						isDefaultForLocation: {},
+						isUserSelectable: true,
+						modelPickerCategory: { label: 'Ollama (Local)', order: 1 },
+						capabilities: {
+							agentMode: true,
+							toolCalling: true
+						}
+					}
+				}));
+			} catch (e) {
+				this._logService.error('[Ollama] Error providing models', e);
+				return [];
+			}
+		});
 	}
 
 	async sendChatRequest(modelId: string, messages: IChatMessage[], from: ExtensionIdentifier | undefined, options: ILanguageModelChatRequestOptions, token: CancellationToken): Promise<ILanguageModelChatResponse> {
+		if (!isShadowAIProviderEnabled(this._configurationService, 'ollama')) {
+			throw new Error('Shadow AI provider `ollama` is disabled by configuration.');
+		}
+
 		const endpoint = this._configurationService.getValue<string>(ShadowAIConfiguration.OllamaEndpoint);
 		const model = modelId.replace('ollama:', '');
 

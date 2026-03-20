@@ -11,8 +11,12 @@ import { IConfigurationService } from '../../../../platform/configuration/common
 import { ExtensionIdentifier } from '../../../../platform/extensions/common/extensions.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
 import { IRequestService } from '../../../../platform/request/common/request.js';
+import { ISecretStorageService } from '../../../../platform/secrets/common/secrets.js';
 import { ILanguageModelChatInfoOptions, ILanguageModelChatMetadataAndIdentifier, ILanguageModelChatProvider, IChatMessage, ILanguageModelChatRequestOptions, ILanguageModelChatResponse, IChatResponsePart, ChatMessageRole } from '../../chat/common/languageModels.js';
 import { ShadowAIConfiguration } from '../common/shadowAISettings.js';
+import { resolveShadowAIApiKey } from '../common/shadowAISecrets.js';
+import { isShadowAICloudProviderBlocked } from '../common/shadowAIProviderAccess.js';
+import { ShadowAIModelCache } from '../common/shadowAIModelCache.js';
 
 interface ICustomOpenAIDelta {
 	choices?: Array<{
@@ -27,10 +31,12 @@ export class CustomOpenAILanguageModelProvider implements ILanguageModelChatProv
 	readonly onDidChange: Event<void> = this._onDidChange.event;
 
 	private readonly _store = new DisposableStore();
+	private readonly _modelInfoCache = new ShadowAIModelCache<ILanguageModelChatMetadataAndIdentifier[]>();
 
 	constructor(
 		@IRequestService private readonly requestService: IRequestService,
 		@IConfigurationService private readonly configurationService: IConfigurationService,
+		@ISecretStorageService private readonly secretStorageService: ISecretStorageService,
 		@ILogService private readonly logService: ILogService,
 	) { }
 
@@ -40,32 +46,45 @@ export class CustomOpenAILanguageModelProvider implements ILanguageModelChatProv
 	}
 
 	async provideLanguageModelChatInfo(options: ILanguageModelChatInfoOptions, token: CancellationToken): Promise<ILanguageModelChatMetadataAndIdentifier[]> {
+		if (isShadowAICloudProviderBlocked(this.configurationService, 'custom')) {
+			return [];
+		}
+
 		const models = this.configurationService.getValue<string[]>(ShadowAIConfiguration.CustomModels) || [];
-		return models.map(model => ({
-			identifier: `custom:${model}`,
-			metadata: {
-				extension: new ExtensionIdentifier('shadowcode.custom'),
-				name: model,
-				id: `custom:${model}`,
-				vendor: 'custom',
-				version: 'latest',
-				family: 'custom',
-				maxInputTokens: 8192,
-				maxOutputTokens: 8192,
-				isDefaultForLocation: {},
-				isUserSelectable: true,
-				modelPickerCategory: { label: 'Custom API', order: 5 },
-				capabilities: {
-					agentMode: true,
-					toolCalling: true
+		const ttlMs = this.configurationService.getValue<number>(ShadowAIConfiguration.ModelListCacheTtlMs) ?? 30000;
+		const cacheKey = `models=${models.join(',')}`;
+
+		return this._modelInfoCache.getOrCompute(cacheKey, ttlMs, async () => {
+			return models.map(model => ({
+				identifier: `custom:${model}`,
+				metadata: {
+					extension: new ExtensionIdentifier('shadowcode.custom'),
+					name: model,
+					id: `custom:${model}`,
+					vendor: 'custom',
+					version: 'latest',
+					family: 'custom',
+					maxInputTokens: 8192,
+					maxOutputTokens: 8192,
+					isDefaultForLocation: {},
+					isUserSelectable: true,
+					modelPickerCategory: { label: 'Custom API', order: 5 },
+					capabilities: {
+						agentMode: true,
+						toolCalling: true
+					}
 				}
-			}
-		}));
+			}));
+		});
 	}
 
 	async sendChatRequest(modelId: string, messages: IChatMessage[], from: ExtensionIdentifier | undefined, options: ILanguageModelChatRequestOptions, token: CancellationToken): Promise<ILanguageModelChatResponse> {
+		if (isShadowAICloudProviderBlocked(this.configurationService, 'custom')) {
+			throw new Error('Shadow AI cloud provider `custom` is blocked by configuration or offline lock.');
+		}
+
 		const endpoint = this.configurationService.getValue<string>(ShadowAIConfiguration.CustomEndpoint);
-		const apiKey = this.configurationService.getValue<string>(ShadowAIConfiguration.CustomApiKey);
+		const apiKey = await resolveShadowAIApiKey('custom', this.configurationService, this.secretStorageService, this.logService);
 		if (!apiKey) {
 			throw new Error('Custom API key is not configured. Set shadowAI.customApiKey in settings.');
 		}

@@ -69,6 +69,7 @@
     "minify-vscode-reh": "npm run gulp minify-vscode-reh",
     "minify-vscode-reh-web": "npm run gulp minify-vscode-reh-web",
     "hygiene": "npm run gulp hygiene",
+    "check-forbidden-domains": "bash ./scripts/check-forbidden-domains.sh",
     "core-ci": "npm run gulp core-ci",
     "core-ci-pr": "npm run gulp core-ci-pr",
     "extensions-ci": "npm run gulp extensions-ci",

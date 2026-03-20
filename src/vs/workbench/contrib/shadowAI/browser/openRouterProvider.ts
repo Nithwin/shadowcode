@@ -11,8 +11,12 @@ import { IConfigurationService } from '../../../../platform/configuration/common
 import { ExtensionIdentifier } from '../../../../platform/extensions/common/extensions.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
 import { IRequestService } from '../../../../platform/request/common/request.js';
+import { ISecretStorageService } from '../../../../platform/secrets/common/secrets.js';
 import { ILanguageModelChatInfoOptions, ILanguageModelChatMetadataAndIdentifier, ILanguageModelChatProvider, IChatMessage, ILanguageModelChatRequestOptions, ILanguageModelChatResponse, IChatResponsePart, ChatMessageRole } from '../../chat/common/languageModels.js';
 import { ShadowAIConfiguration } from '../common/shadowAISettings.js';
+import { resolveShadowAIApiKey } from '../common/shadowAISecrets.js';
+import { isShadowAICloudProviderBlocked } from '../common/shadowAIProviderAccess.js';
+import { ShadowAIModelCache } from '../common/shadowAIModelCache.js';
 
 interface IOpenRouterDelta {
 	choices?: Array<{
@@ -27,10 +31,12 @@ export class OpenRouterLanguageModelProvider implements ILanguageModelChatProvid
 	readonly onDidChange: Event<void> = this._onDidChange.event;
 
 	private readonly _store = new DisposableStore();
+	private readonly _modelInfoCache = new ShadowAIModelCache<ILanguageModelChatMetadataAndIdentifier[]>();
 
 	constructor(
 		@IRequestService private readonly requestService: IRequestService,
 		@IConfigurationService private readonly configurationService: IConfigurationService,
+		@ISecretStorageService private readonly secretStorageService: ISecretStorageService,
 		@ILogService private readonly logService: ILogService,
 	) { }
 
@@ -40,32 +46,45 @@ export class OpenRouterLanguageModelProvider implements ILanguageModelChatProvid
 	}
 
 	async provideLanguageModelChatInfo(options: ILanguageModelChatInfoOptions, token: CancellationToken): Promise<ILanguageModelChatMetadataAndIdentifier[]> {
+		if (isShadowAICloudProviderBlocked(this.configurationService, 'openrouter')) {
+			return [];
+		}
+
 		const models = this.configurationService.getValue<string[]>(ShadowAIConfiguration.OpenRouterModels) || [];
-		return models.map(model => ({
-			identifier: `openrouter:${model}`,
-			metadata: {
-				extension: new ExtensionIdentifier('shadowcode.openrouter'),
-				name: model,
-				id: `openrouter:${model}`,
-				vendor: 'openrouter',
-				version: 'latest',
-				family: 'openrouter',
-				maxInputTokens: 8192,
-				maxOutputTokens: 8192,
-				isDefaultForLocation: {},
-				isUserSelectable: true,
-				modelPickerCategory: { label: 'OpenRouter', order: 3 },
-				capabilities: {
-					agentMode: true,
-					toolCalling: true
+		const ttlMs = this.configurationService.getValue<number>(ShadowAIConfiguration.ModelListCacheTtlMs) ?? 30000;
+		const cacheKey = `models=${models.join(',')}`;
+
+		return this._modelInfoCache.getOrCompute(cacheKey, ttlMs, async () => {
+			return models.map(model => ({
+				identifier: `openrouter:${model}`,
+				metadata: {
+					extension: new ExtensionIdentifier('shadowcode.openrouter'),
+					name: model,
+					id: `openrouter:${model}`,
+					vendor: 'openrouter',
+					version: 'latest',
+					family: 'openrouter',
+					maxInputTokens: 8192,
+					maxOutputTokens: 8192,
+					isDefaultForLocation: {},
+					isUserSelectable: true,
+					modelPickerCategory: { label: 'OpenRouter', order: 3 },
+					capabilities: {
+						agentMode: true,
+						toolCalling: true
+					}
 				}
-			}
-		}));
+			}));
+		});
 	}
 
 	async sendChatRequest(modelId: string, messages: IChatMessage[], from: ExtensionIdentifier | undefined, options: ILanguageModelChatRequestOptions, token: CancellationToken): Promise<ILanguageModelChatResponse> {
+		if (isShadowAICloudProviderBlocked(this.configurationService, 'openrouter')) {
+			throw new Error('Shadow AI cloud provider `openrouter` is blocked by configuration or offline lock.');
+		}
+
 		const endpoint = this.configurationService.getValue<string>(ShadowAIConfiguration.OpenRouterEndpoint);
-		const apiKey = this.configurationService.getValue<string>(ShadowAIConfiguration.OpenRouterApiKey);
+		const apiKey = await resolveShadowAIApiKey('openrouter', this.configurationService, this.secretStorageService, this.logService);
 		if (!apiKey) {
 			throw new Error('OpenRouter API key is not configured. Set shadowAI.openRouterApiKey in settings.');
 		}

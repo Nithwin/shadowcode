@@ -20,6 +20,14 @@ export const ShadowAIConfiguration = {
 	CustomEndpoint: 'shadowAI.customEndpoint',
 	CustomApiKey: 'shadowAI.customApiKey',
 	CustomModels: 'shadowAI.customModels',
+	OfflineLock: 'shadowAI.offlineLock',
+	EnabledProviders: 'shadowAI.enabledProviders',
+	ModelListCacheTtlMs: 'shadowAI.modelListCacheTtlMs',
+	AutoModelFallback: 'shadowAI.autoModelFallback',
+	MaxModelFallbackAttempts: 'shadowAI.maxModelFallbackAttempts',
+	WorkflowProfile: 'shadowAI.workflowProfile',
+	AgentMarketplaceUrl: 'shadowAI.agentMarketplaceUrl',
+	ProviderPriority: 'shadowAI.providerPriority',
 	DefaultModel: 'shadowAI.defaultModel',
 };
 
@@ -110,6 +118,59 @@ configurationRegistry.registerConfiguration({
 			items: { type: 'string' },
 			default: [],
 			description: localize('shadowAI.customModels', "Custom provider models available in the Shadow AI provider switcher."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.OfflineLock]: {
+			type: 'boolean',
+			default: false,
+			description: localize('shadowAI.offlineLock', "Force Shadow AI into local-only mode by disabling all cloud providers."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.EnabledProviders]: {
+			type: 'array',
+			items: { type: 'string' },
+			default: ['ollama', 'openrouter', 'groq', 'huggingface', 'custom'],
+			description: localize('shadowAI.enabledProviders', "List of enabled Shadow AI providers. Providers not in this list are disabled."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.ModelListCacheTtlMs]: {
+			type: 'number',
+			default: 30000,
+			minimum: 0,
+			description: localize('shadowAI.modelListCacheTtlMs', "TTL for cached provider model lists in milliseconds. Set to 0 to disable model list caching."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.AutoModelFallback]: {
+			type: 'boolean',
+			default: true,
+			description: localize('shadowAI.autoModelFallback', "Automatically fall back to the next available model when rate limits or provider capacity issues occur."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.MaxModelFallbackAttempts]: {
+			type: 'number',
+			default: 4,
+			minimum: 1,
+			description: localize('shadowAI.maxModelFallbackAttempts', "Maximum number of model attempts for automatic fallback execution."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.WorkflowProfile]: {
+			type: 'string',
+			enum: ['offline', 'balanced', 'cloud'],
+			default: 'balanced',
+			description: localize('shadowAI.workflowProfile', "Workflow profile preset for routing and fallback behavior."),
+			scope: ConfigurationScope.RESOURCE
+		},
+		[ShadowAIConfiguration.AgentMarketplaceUrl]: {
+			type: 'string',
+			default: 'https://open-vsx.org/?q=shadowcode+agent',
+			description: localize('shadowAI.agentMarketplaceUrl', "Marketplace URL used by Shadow AI agent marketplace command."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.ProviderPriority]: {
+			type: 'array',
+			items: { type: 'string' },
+			default: ['ollama', 'openrouter', 'groq', 'huggingface', 'custom'],
+			description: localize('shadowAI.providerPriority', "Preferred provider order used when selecting fallback models automatically."),
 			scope: ConfigurationScope.RESOURCE
 		},
 		[ShadowAIConfiguration.DefaultModel]: {
