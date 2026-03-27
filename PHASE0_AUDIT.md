@@ -19,7 +19,7 @@ Status legend:
 
 ## Telemetry and Network
 - IN_PROGRESS: Core Microsoft CDN runtime fallbacks replaced in key webview/runtime paths
-- TODO: Remove/replace Microsoft telemetry dependencies and sender wiring
+- DONE: Remove/replace Microsoft telemetry dependencies and sender wiring
 - DONE: Added forbidden-domain guard script (`scripts/check-forbidden-domains.sh`) and npm task (`check-forbidden-domains`)
 - TODO: Add outbound domain allowlist policy document
 

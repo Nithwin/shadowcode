@@ -545,11 +545,7 @@ class PrimaryOpenChatGlobalAction extends OpenChatGlobalAction {
 					primary: KeyMod.CtrlCmd | KeyMod.WinCtrl | KeyCode.KeyI
 				}
 			},
-			menu: [{
-				id: MenuId.ChatTitleBarMenu,
-				group: 'a_open',
-				order: 1
-			}]
+			// ShadowCode: removed ChatTitleBarMenu entry
 		});
 	}
 }
@@ -650,10 +646,6 @@ export function registerChatActions() {
 					when: ContextKeyExpr.and(ChatContextKeys.inChatSession, ChatContextKeys.inChatEditor)
 				},
 				menu: [{
-					id: MenuId.ChatTitleBarMenu,
-					group: 'b_new',
-					order: 0
-				}, {
 					id: MenuId.ChatNewMenu,
 					group: '2_new',
 					order: 2
@@ -770,10 +762,6 @@ export function registerChatActions() {
 				category: CHAT_CATEGORY,
 				precondition: ChatContextKeys.enabled,
 				menu: [{
-					id: MenuId.ChatTitleBarMenu,
-					group: 'b_new',
-					order: 1
-				}, {
 					id: MenuId.ChatNewMenu,
 					group: '2_new',
 					order: 3
@@ -1100,12 +1088,7 @@ export function registerChatActions() {
 					),
 					nonEnterpriseCopilotUsers
 				),
-				menu: {
-					id: MenuId.ChatTitleBarMenu,
-					group: 'y_manage',
-					order: 1,
-					when: nonEnterpriseCopilotUsers
-				}
+				// ShadowCode: removed ChatTitleBarMenu entry for Manage Chat
 			});
 		}
 
@@ -1144,11 +1127,7 @@ export function registerChatActions() {
 					ChatContextKeys.Setup.disabled.negate(),
 					ChatContextKeys.Setup.untrusted.negate()
 				),
-				menu: {
-					id: MenuId.ChatTitleBarMenu,
-					group: 'f_completions',
-					order: 10,
-				}
+				// ShadowCode: removed ChatTitleBarMenu entry for Configure Completions
 			});
 		}
 

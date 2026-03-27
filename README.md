@@ -101,6 +101,18 @@ ShadowCode now has an automatic model execution planner for resilient agent runs
 - Retry budget controlled with `shadowAI.maxModelFallbackAttempts`.
 - Behavior can be toggled with `shadowAI.autoModelFallback`.
 
+## Project Constitution (for AI Agents)
+
+ShadowCode ships a persistent project context file that Shadow AI automatically loads into every chat session:
+
+```
+.shadowcode/AGENT_CONSTITUTION.md
+```
+
+This file contains the full architecture overview, key file paths, settings reference, and security policies. Because it's loaded as a system prompt on every session, Shadow AI **does not need to re-read the repo** on each query — it already knows the project structure. If you add new features, update this file so future AI sessions stay current.
+
+---
+
 ## License
 
 Copyright (c) ShadowCode Contributors.

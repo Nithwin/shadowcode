@@ -57,7 +57,7 @@ Milestone goal:
 	- Details: implemented via `scripts/check-forbidden-domains.sh` and package script integration.
 
 ### Runtime Hardening
-- [ ] Replace `vscode-cdn.net` fallbacks with ShadowCode-owned host
+- [x] Replace `vscode-cdn.net` fallbacks with ShadowCode-owned host
 	- Details: include webviews, static asset paths, and extension web runtime dependencies.
 - [ ] Re-check webview CSP for allowed hosts only
 	- Details: remove broad host patterns and verify feature-by-feature allowlists.

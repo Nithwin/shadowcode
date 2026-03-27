@@ -4,19 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { registerSingleton, InstantiationType } from '../../../../../../platform/instantiation/common/extensions.js';
-import { MenuId, MenuRegistry, registerAction2 } from '../../../../../../platform/actions/common/actions.js';
+import { registerAction2 } from '../../../../../../platform/actions/common/actions.js';
 import { IAgentSessionProjectionService, AgentSessionProjectionService, AGENT_SESSION_PROJECTION_ENABLED_PROVIDERS } from './agentSessionProjectionService.js';
 import { EnterAgentSessionProjectionAction, ExitAgentSessionProjectionAction, ToggleAgentStatusAction, ToggleUnifiedAgentsBarAction } from './agentSessionProjectionActions.js';
 import { IWorkbenchContribution, registerWorkbenchContribution2, WorkbenchPhase } from '../../../../../common/contributions.js';
 import { AgentTitleBarStatusRendering } from './agentTitleBarStatusWidget.js';
 import { AgentTitleBarStatusService, IAgentTitleBarStatusService } from './agentTitleBarStatusService.js';
-import { Codicon } from '../../../../../../base/common/codicons.js';
-import { localize } from '../../../../../../nls.js';
-import { ContextKeyExpr } from '../../../../../../platform/contextkey/common/contextkey.js';
-import { ProductQualityContext } from '../../../../../../platform/contextkey/common/contextkeys.js';
-import { ChatAgentLocation, ChatConfiguration } from '../../../common/constants.js';
-import { ChatContextKeys } from '../../../common/actions/chatContextKeys.js';
-import { Disposable, DisposableStore, IDisposable } from '../../../../../../base/common/lifecycle.js';
+import { IDisposable, Disposable, DisposableStore } from '../../../../../../base/common/lifecycle.js';
 import { IChatWidget, IChatWidgetService } from '../../chat.js';
 import { IConfigurationService } from '../../../../../../platform/configuration/common/configuration.js';
 import { IAgentSessionsService } from '../agentSessionsService.js';
@@ -25,6 +19,7 @@ import { IChatEditingService, ModifiedFileEntryState } from '../../../common/edi
 import { isSessionInProgressStatus } from '../agentSessionsModel.js';
 import { URI } from '../../../../../../base/common/uri.js';
 import { autorun } from '../../../../../../base/common/observable.js';
+import { ChatAgentLocation, ChatConfiguration } from '../../../common/constants.js';
 
 import './unifiedQuickAccessActions.js'; // Register unified quick access actions
 
@@ -245,6 +240,8 @@ registerWorkbenchContribution2(AgentTitleBarStatusRendering.ID, AgentTitleBarSta
 registerWorkbenchContribution2(AgentSessionReadyContribution.ID, AgentSessionReadyContribution, WorkbenchPhase.AfterRestored);
 
 // Register Agent Status as a menu item in the command center (alongside the search box, not replacing it)
+// ShadowCode: removed Agents sparkle menu from command center
+/*
 MenuRegistry.appendMenuItem(MenuId.CommandCenter, {
 	submenu: MenuId.AgentsTitleBarControlMenu,
 	title: localize('agentsControl', "Agents"),
@@ -258,8 +255,11 @@ MenuRegistry.appendMenuItem(MenuId.CommandCenter, {
 	),
 	order: 10002 // to the right of the chat button
 });
+*/
 
 // Add to the global title bar if command center is disabled
+// ShadowCode: removed ChatTitleBarMenu from title bar
+/*
 MenuRegistry.appendMenuItem(MenuId.TitleBar, {
 	submenu: MenuId.ChatTitleBarMenu,
 	title: localize('title4', "Chat"),
@@ -276,8 +276,11 @@ MenuRegistry.appendMenuItem(MenuId.TitleBar, {
 	),
 	order: 1
 });
+*/
 
 // Register a placeholder action to the submenu so it appears (required for submenus)
+// ShadowCode: removed placeholder
+/*
 MenuRegistry.appendMenuItem(MenuId.AgentsTitleBarControlMenu, {
 	command: {
 		id: 'workbench.action.chat.toggle',
@@ -293,8 +296,11 @@ MenuRegistry.appendMenuItem(MenuId.AgentsTitleBarControlMenu, {
 	group: 'a_open',
 	order: 1
 });
+*/
 
 // Toggle for Agent Quick Input (Insiders only)
+// ShadowCode: removed experimental toggle
+/*
 MenuRegistry.appendMenuItem(MenuId.AgentsTitleBarControlMenu, {
 	command: {
 		id: `toggle.${ChatConfiguration.UnifiedAgentsBar}`,
@@ -308,5 +314,6 @@ MenuRegistry.appendMenuItem(MenuId.AgentsTitleBarControlMenu, {
 	group: 'z_experimental',
 	order: 10
 });
+*/
 
 //#endregion

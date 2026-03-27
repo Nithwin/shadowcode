@@ -19,8 +19,9 @@ export interface IAppInsightsCore {
 	unload(isAsync: boolean, unloadComplete: (unloadState: ITelemetryUnloadState) => void): void;
 }
 
-const endpointUrl = 'https://mobile.events.data.microsoft.com/OneCollector/1.0';
-const endpointHealthUrl = 'https://mobile.events.data.microsoft.com/ping';
+const endpointUrl = 'https://telemetry.shadowcode.internal/OneCollector/1.0';
+const endpointHealthUrl = 'https://telemetry.shadowcode.internal/ping';
+
 
 async function getClient(instrumentationKey: string, addInternalFlag?: boolean, xhrOverride?: IXHROverride): Promise<IAppInsightsCore> {
 	// eslint-disable-next-line local/code-amd-node-module

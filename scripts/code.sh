@@ -27,7 +27,7 @@ function code() {
 
 	# Get electron, compile, built-in extensions
 	if [[ -z "${VSCODE_SKIP_PRELAUNCH}" ]]; then
-		node build/lib/preLaunch.ts
+		npx --yes tsx build/lib/preLaunch.ts
 	fi
 
 	# Manage built-in extensions
@@ -49,7 +49,7 @@ function code() {
 	fi
 
 	# Launch Code
-	exec "$CODE" . $DISABLE_TEST_EXTENSION "$@"
+	exec "$CODE" . --no-sandbox $DISABLE_TEST_EXTENSION "$@"
 }
 
 function code-wsl()

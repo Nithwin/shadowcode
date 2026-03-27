@@ -9,18 +9,15 @@ import { basename } from '../../../../../base/common/resources.js';
 import { ServicesAccessor } from '../../../../../editor/browser/editorExtensions.js';
 import { IBulkEditService } from '../../../../../editor/browser/services/bulkEditService.js';
 import { localize, localize2 } from '../../../../../nls.js';
-import { Action2, MenuId, registerAction2 } from '../../../../../platform/actions/common/actions.js';
+import { Action2, registerAction2 } from '../../../../../platform/actions/common/actions.js';
 import { IConfigurationService } from '../../../../../platform/configuration/common/configuration.js';
-import { ContextKeyExpr } from '../../../../../platform/contextkey/common/contextkey.js';
 import { IDialogService } from '../../../../../platform/dialogs/common/dialogs.js';
 import { IEditorService } from '../../../../services/editor/common/editorService.js';
 import { ResourceNotebookCellEdit } from '../../../bulkEdit/browser/bulkCellEdits.js';
-import { MENU_INLINE_CHAT_WIDGET_SECONDARY } from '../../../inlineChat/common/inlineChat.js';
 import { INotebookEditor } from '../../../notebook/browser/notebookBrowser.js';
 import { CellEditType, CellKind, NOTEBOOK_EDITOR_ID } from '../../../notebook/common/notebookCommon.js';
-import { NOTEBOOK_IS_ACTIVE_EDITOR } from '../../../notebook/common/notebookContextKeys.js';
 import { ChatContextKeys } from '../../common/actions/chatContextKeys.js';
-import { applyingChatEditsFailedContextKey, isChatEditingActionContext } from '../../common/editing/chatEditingService.js';
+import { isChatEditingActionContext } from '../../common/editing/chatEditingService.js';
 import { ChatAgentVoteDirection, ChatAgentVoteDownReason, IChatService } from '../../common/chatService/chatService.js';
 import { isResponseVM } from '../../common/model/chatViewModel.js';
 import { ChatModeKind } from '../../common/constants.js';
@@ -29,7 +26,6 @@ import { CHAT_CATEGORY } from './chatActions.js';
 
 export const MarkHelpfulActionId = 'workbench.action.chat.markHelpful';
 export const MarkUnhelpfulActionId = 'workbench.action.chat.markUnhelpful';
-const enableFeedbackConfig = 'config.telemetry.feedback.enabled';
 
 export function registerChatTitleActions() {
 	registerAction2(class MarkHelpfulAction extends Action2 {
@@ -41,6 +37,8 @@ export function registerChatTitleActions() {
 				category: CHAT_CATEGORY,
 				icon: Codicon.thumbsup,
 				toggled: ChatContextKeys.responseVote.isEqualTo('up'),
+				// ShadowCode: removed menu entries for feedback
+				/*
 				menu: [{
 					id: MenuId.ChatMessageFooter,
 					group: 'navigation',
@@ -52,6 +50,7 @@ export function registerChatTitleActions() {
 					order: 1,
 					when: ContextKeyExpr.and(ChatContextKeys.extensionParticipantRegistered, ChatContextKeys.isResponse, ChatContextKeys.responseHasError.negate(), ContextKeyExpr.has(enableFeedbackConfig), ChatContextKeys.lockedToCodingAgent.negate())
 				}]
+				*/
 			});
 		}
 
@@ -88,6 +87,8 @@ export function registerChatTitleActions() {
 				category: CHAT_CATEGORY,
 				icon: Codicon.thumbsdown,
 				toggled: ChatContextKeys.responseVote.isEqualTo('down'),
+				// ShadowCode: removed menu entries for feedback
+				/*
 				menu: [{
 					id: MenuId.ChatMessageFooter,
 					group: 'navigation',
@@ -99,6 +100,7 @@ export function registerChatTitleActions() {
 					order: 2,
 					when: ContextKeyExpr.and(ChatContextKeys.extensionParticipantRegistered, ChatContextKeys.isResponse, ChatContextKeys.responseHasError.negate(), ContextKeyExpr.has(enableFeedbackConfig), ChatContextKeys.lockedToCodingAgent.negate())
 				}]
+				*/
 			});
 		}
 
@@ -140,6 +142,8 @@ export function registerChatTitleActions() {
 				f1: false,
 				category: CHAT_CATEGORY,
 				icon: Codicon.report,
+				// ShadowCode: removed menu entries for issue reporting
+				/*
 				menu: [{
 					id: MenuId.ChatMessageFooter,
 					group: 'navigation',
@@ -151,6 +155,7 @@ export function registerChatTitleActions() {
 					order: 3,
 					when: ContextKeyExpr.and(ChatContextKeys.responseSupportsIssueReporting, ChatContextKeys.isResponse, ContextKeyExpr.has(enableFeedbackConfig))
 				}]
+				*/
 			});
 		}
 
@@ -182,6 +187,8 @@ export function registerChatTitleActions() {
 				f1: false,
 				category: CHAT_CATEGORY,
 				icon: Codicon.refresh,
+				// ShadowCode: removed menu entries for retry
+				/*
 				menu: [
 					{
 						id: MenuId.ChatMessageFooter,
@@ -198,6 +205,7 @@ export function registerChatTitleActions() {
 						order: 0
 					}
 				]
+				*/
 			});
 		}
 
@@ -280,12 +288,15 @@ export function registerChatTitleActions() {
 				f1: false,
 				category: CHAT_CATEGORY,
 				icon: Codicon.insert,
+				// ShadowCode: removed menu entries for notebook
+				/*
 				menu: {
 					id: MenuId.ChatMessageFooter,
 					group: 'navigation',
 					isHiddenByDefault: true,
 					when: ContextKeyExpr.and(NOTEBOOK_IS_ACTIVE_EDITOR, ChatContextKeys.isResponse, ChatContextKeys.responseIsFiltered.negate(), ChatContextKeys.lockedToCodingAgent.negate())
 				}
+				*/
 			});
 		}
 
