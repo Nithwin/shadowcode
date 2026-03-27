@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) ShadowCode Contributors. All rights reserved.
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import { AsyncIterableSource } from '../../../../base/common/async.js';
@@ -10,7 +11,7 @@ import { listenStream } from '../../../../base/common/stream.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
 import { ExtensionIdentifier } from '../../../../platform/extensions/common/extensions.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
-import { IRequestService } from '../../../../platform/request/common/request.js';
+import { IRequestService, asText } from '../../../../platform/request/common/request.js';
 import { ISecretStorageService } from '../../../../platform/secrets/common/secrets.js';
 import { ILanguageModelChatInfoOptions, ILanguageModelChatMetadataAndIdentifier, ILanguageModelChatProvider, IChatMessage, ILanguageModelChatRequestOptions, ILanguageModelChatResponse, IChatResponsePart, ChatMessageRole } from '../../chat/common/languageModels.js';
 import { ShadowAIConfiguration } from '../common/shadowAISettings.js';
@@ -89,10 +90,13 @@ export class OpenRouterLanguageModelProvider implements ILanguageModelChatProvid
 			throw new Error('OpenRouter API key is not configured. Set shadowAI.openRouterApiKey in settings.');
 		}
 
-		const model = modelId.replace('openrouter:', '');
+		let model = modelId.replace('openrouter:', '');
+		if (model === 'auto' || model === 'openrouter/auto') {
+			model = 'openrouter/auto';
+		}
 		const requestMessages = messages.map(message => ({
 			role: this.mapRole(message.role),
-			content: message.content.map(part => part.type === 'text' ? part.value : '').join('')
+			content: message.content.map(part => part.type === 'text' ? part.value : '').join('') || ' '
 		}));
 
 		const requestBody = {
@@ -101,8 +105,9 @@ export class OpenRouterLanguageModelProvider implements ILanguageModelChatProvid
 			stream: true
 		};
 
+		const url = `${endpoint.replace(/\/+$/, '')}/chat/completions`;
 		const context = await this.requestService.request({
-			url: `${endpoint}/chat/completions`,
+			url,
 			type: 'POST',
 			data: JSON.stringify(requestBody),
 			headers: {
@@ -115,7 +120,8 @@ export class OpenRouterLanguageModelProvider implements ILanguageModelChatProvid
 		}, token);
 
 		if (context.res.statusCode !== 200) {
-			throw new Error(`OpenRouter request failed with status ${context.res.statusCode}`);
+			const errorBody = await asText(context);
+			throw new Error(`OpenRouter request failed with status ${context.res.statusCode}: ${errorBody}`);
 		}
 
 		const source = new AsyncIterableSource<IChatResponsePart>();

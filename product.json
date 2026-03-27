@@ -33,10 +33,27 @@
   "nodejsRepository": "https://nodejs.org",
   "urlProtocol": "shadowcode",
   "webviewContentExternalBaseUrlTemplate": "https://{{uuid}}.cdn.shadowcode.dev/out/vs/workbench/contrib/webview/browser/pre/",
+  "defaultChatAgent": {
+    "extensionId": "GitHub.copilot",
+    "chatExtensionId": "GitHub.copilot-chat",
+    "provider": {
+      "default": {
+        "id": "github",
+        "name": "GitHub"
+      },
+      "enterprise": {
+        "id": "github-enterprise",
+        "name": "GitHub Enterprise"
+      }
+    },
+    "providerScopes": []
+  },
   "extensionsGallery": {
     "serviceUrl": "https://open-vsx.org/vscode/gallery",
     "cacheUrl": "https://open-vsx.org/vscode/gallery",
     "itemUrl": "https://open-vsx.org/vscode/item",
+    "publisherUrl": "https://open-vsx.org/publisher",
+    "resourceUrlTemplate": "https://open-vsx.org/vscode/unpkg/{publisher}/{name}/{version}/{path}",
     "controlUrl": "",
     "recommendationsUrl": ""
   }

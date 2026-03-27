@@ -174,7 +174,7 @@ export class SetupAgent extends Disposable implements IChatAgentImplementation {
 		return { agent, disposable: disposables };
 	}
 
-	private static readonly SETUP_NEEDED_MESSAGE = new MarkdownString(localize('settingUpCopilotNeeded', "You need to set up GitHub Copilot and be signed in to use Chat."));
+	private static readonly SETUP_NEEDED_MESSAGE = new MarkdownString(localize('settingUpCopilotNeeded', "Set up a chat provider and sign in if required to use Chat."));
 	private static readonly TRUST_NEEDED_MESSAGE = new MarkdownString(localize('trustNeeded', "You need to trust this workspace to use Chat."));
 
 	private static readonly CHAT_RETRY_COMMAND_ID = 'workbench.action.chat.retrySetup';
@@ -255,14 +255,25 @@ export class SetupAgent extends Disposable implements IChatAgentImplementation {
 	}
 
 	private async doInvoke(request: IChatAgentRequest, progress: (part: IChatProgress) => void, chatService: IChatService, languageModelsService: ILanguageModelsService, chatWidgetService: IChatWidgetService, chatAgentService: IChatAgentService, languageModelToolsService: ILanguageModelToolsService, defaultAccountService: IDefaultAccountService): Promise<IChatAgentResult> {
+		const modeKind = chatWidgetService.getWidgetBySessionResource(request.sessionResource)?.input.currentModeInfo?.kind;
+		const defaultAgent = chatAgentService.getDefaultAgent(this.location, modeKind);
+		const contributedDefaultAgent = chatAgentService.getContributedDefaultAgent(this.location);
+		const hasNonCoreDefaultAgent = Boolean(
+			(defaultAgent && !defaultAgent.isCore) ||
+			(contributedDefaultAgent && !contributedDefaultAgent.isCore)
+		);
+
 		if (
-			!this.context.state.installed ||									// Extension not installed: run setup to install
-			this.context.state.disabled ||										// Extension disabled: run setup to enable
-			this.context.state.untrusted ||										// Workspace untrusted: run setup to ask for trust
-			this.context.state.entitlement === ChatEntitlement.Available ||		// Entitlement available: run setup to sign up
+			!hasNonCoreDefaultAgent &&
 			(
-				this.context.state.entitlement === ChatEntitlement.Unknown &&	// Entitlement unknown: run setup to sign in / sign up
-				!this.chatEntitlementService.anonymous							// unless anonymous access is enabled
+				!this.context.state.installed ||								// Extension not installed: run setup to install
+				this.context.state.disabled ||								// Extension disabled: run setup to enable
+				this.context.state.untrusted ||								// Workspace untrusted: run setup to ask for trust
+				this.context.state.entitlement === ChatEntitlement.Available ||	// Entitlement available: run setup to sign up
+				(
+					this.context.state.entitlement === ChatEntitlement.Unknown &&	// Entitlement unknown: run setup to sign in / sign up
+					!this.chatEntitlementService.anonymous						// unless anonymous access is enabled
+				)
 			)
 		) {
 			return this.doInvokeWithSetup(request, progress, chatService, languageModelsService, chatWidgetService, chatAgentService, languageModelToolsService, defaultAccountService);

@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) ShadowCode Contributors. All rights reserved.
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 export interface IShadowAIModelPlanInput {
@@ -73,6 +74,8 @@ export function shouldFallbackToNextModel(error: unknown): boolean {
 	const message = (error instanceof Error ? error.message : String(error)).toLowerCase();
 	return (
 		message.includes('429') ||
+		message.includes('400') ||
+		message.includes('404') ||
 		message.includes('rate limit') ||
 		message.includes('quota') ||
 		message.includes('capacity') ||

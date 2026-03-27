@@ -8,9 +8,12 @@ import { LifecyclePhase } from '../../../services/lifecycle/common/lifecycle.js'
 import { Registry } from '../../../../platform/registry/common/platform.js';
 import { Disposable } from '../../../../base/common/lifecycle.js';
 import { ILanguageModelsService, IChatMessage, ChatMessageRole } from '../../chat/common/languageModels.js';
+import { TextEdit } from '../../../../editor/common/languages.js';
+import { Range } from '../../../../editor/common/core/range.js';
 import { IInstantiationService, ServicesAccessor } from '../../../../platform/instantiation/common/instantiation.js';
 import { Action2, MenuId, registerAction2 } from '../../../../platform/actions/common/actions.js';
 import { IPreferencesService } from '../../../services/preferences/common/preferences.js';
+import { IEditorService } from '../../../services/editor/common/editorService.js';
 import { localize2 } from '../../../../nls.js';
 import { Codicon } from '../../../../base/common/codicons.js';
 import { INotificationService } from '../../../../platform/notification/common/notification.js';
@@ -25,7 +28,7 @@ import { IChatProgress } from '../../chat/common/chatService/chatService.js';
 import { CancellationToken } from '../../../../base/common/cancellation.js';
 import { ChatAgentLocation, ChatModeKind } from '../../chat/common/constants.js';
 import { MarkdownString } from '../../../../base/common/htmlContent.js';
-import { nullExtensionDescription } from '../../../services/extensions/common/extensions.js';
+import { ExtensionIdentifier } from '../../../../platform/extensions/common/extensions.js';
 import { ChatContextKeys } from '../../chat/common/actions/chatContextKeys.js';
 import { ConfigurationTarget, IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
 import { sanitizeShadowAIErrorMessage } from '../common/shadowAIRedaction.js';
@@ -40,14 +43,36 @@ import { IStorageService, StorageScope, StorageTarget } from '../../../../platfo
 import { addShadowAIMemoryEntry, buildShadowAIMemoryPrompt, parseShadowAIMemoryState, serializeShadowAIMemoryState, SHADOW_AI_MEMORY_STORAGE_KEY } from '../common/shadowAIMemory.js';
 import { buildShadowAIModelPlan, shouldFallbackToNextModel } from '../common/shadowAIModelPlan.js';
 import { IOpenerService } from '../../../../platform/opener/common/opener.js';
+import { IFileService, IFileStat } from '../../../../platform/files/common/files.js';
+import { IWorkspaceContextService, IWorkspaceFolder } from '../../../../platform/workspace/common/workspace.js';
+import { URI } from '../../../../base/common/uri.js';
+import { VSBuffer } from '../../../../base/common/buffer.js';
+
+interface IShadowAIWorkspaceFileCandidate {
+	readonly resource: URI;
+	readonly displayPath: string;
+}
 
 export class ShadowChatAgent implements IChatAgentImplementation {
 
 	constructor(
 		@ILanguageModelsService private readonly languageModelsService: ILanguageModelsService,
 		@IConfigurationService private readonly configurationService: IConfigurationService,
-		@IStorageService private readonly storageService: IStorageService
+		@IStorageService private readonly storageService: IStorageService,
+		@IFileService private readonly fileService: IFileService,
+		@IWorkspaceContextService private readonly workspaceContextService: IWorkspaceContextService,
+		@IEditorService private readonly editorService: IEditorService
 	) { }
+
+	private static readonly WORKSPACE_MAX_FILES = 220;
+	private static readonly WORKSPACE_MAX_DEPTH = 4;
+	private static readonly WORKSPACE_TREE_PREVIEW_COUNT = 90;
+	private static readonly WORKSPACE_SNIPPET_FILE_COUNT = 4;
+	private static readonly WORKSPACE_SNIPPET_BYTES = 4500;
+	private static readonly WORKSPACE_SNIPPET_CHARS = 3000;
+	private static readonly SKIPPED_FOLDERS = new Set(['.git', 'node_modules', 'out', 'dist', '.next', '.cache', 'coverage', '.vscode-test']);
+	private static readonly TEXT_FILE_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs', '.json', '.md', '.yml', '.yaml', '.xml', '.html', '.css', '.scss', '.less', '.py', '.go', '.java', '.rs', '.sh']);
+	private static readonly COMMON_STOP_WORDS = new Set(['the', 'this', 'that', 'with', 'from', 'into', 'about', 'need', 'please', 'what', 'when', 'where', 'which', 'show', 'make', 'file', 'files', 'project', 'workspace', 'code', 'chat', 'agent', 'help']);
 
 	private buildModelPlan(userSelectedModelId: string | undefined): readonly string[] {
 		const modelIds = this.languageModelsService.getLanguageModelIds();
@@ -72,18 +97,57 @@ export class ShadowChatAgent implements IChatAgentImplementation {
 
 	async invoke(request: IChatAgentRequest, progress: (parts: IChatProgress[]) => void, history: IChatAgentHistoryEntry[], token: CancellationToken): Promise<IChatAgentResult> {
 		const modelPlan = this.buildModelPlan(request.userSelectedModelId);
-		if (modelPlan.length === 0) {
-			progress([{ kind: 'markdownContent', content: new MarkdownString('No language model available. Please configure your model settings.') }]);
-			return {};
-		}
-
-		progress([{ kind: 'progressMessage', content: new MarkdownString('Generating...') }]);
+		const userModelStr = request.userSelectedModelId || 'Auto';
+		progress([{ kind: 'progressMessage', content: new MarkdownString(`Selected Model: ${userModelStr} (Plan: ${modelPlan.join(' -> ')})`) }]);
 
 		const messages: IChatMessage[] = [];
+		const systemParts: string[] = [];
+
 		const memoryState = parseShadowAIMemoryState(this.storageService.get(SHADOW_AI_MEMORY_STORAGE_KEY, StorageScope.WORKSPACE));
 		const memoryPrompt = buildShadowAIMemoryPrompt(memoryState, 6);
 		if (memoryPrompt) {
-			messages.push({ role: ChatMessageRole.System, content: [{ type: 'text', value: memoryPrompt }] });
+			systemParts.push(memoryPrompt);
+		}
+
+		const workspacePrompt = await this.buildWorkspacePrompt(request.message, token);
+		if (workspacePrompt) {
+			systemParts.push(workspacePrompt);
+		}
+
+		const activeFilePrompt = await this.getActiveFilePrompt();
+		if (activeFilePrompt) {
+			systemParts.push(activeFilePrompt);
+		}
+
+	systemParts.push(`You are Shadow AI, an advanced agentic coding assistant.
+Your goal is to help the user with their coding tasks.
+
+### CRITICAL: AGENT ACTION FORMAT
+You MUST use these EXACT XML tags to perform actions. If you do not use these tags, the user's IDE will not be able to apply your changes, and you will fail your task.
+
+**To edit an existing file** (you MUST provide the COMPLETE new file content, do not truncate):
+<EDIT file="path/to/file">
+full file content here
+</EDIT>
+
+**To create a new file**:
+<CREATE file="path/to/file">
+new file content here
+</CREATE>
+
+**To delete a file**:
+<DELETE file="path/to/file" />
+
+**To run a terminal command**:
+<RUN command="npm test" />
+
+### RULES
+1. NEVER output raw code blocks without wrapping them in <EDIT> or <CREATE> tags if you want the user to save the file.
+2. ALWAYS provide the full file path.
+3. Be proactive and concise.`);
+
+		if (systemParts.length > 0) {
+			messages.push({ role: ChatMessageRole.System, content: [{ type: 'text', value: systemParts.join('\n\n') }] });
 		}
 
 		for (const entry of history) {
@@ -103,7 +167,8 @@ export class ShadowChatAgent implements IChatAgentImplementation {
 				}
 			}
 		}
-		messages.push({ role: ChatMessageRole.User, content: [{ type: 'text', value: request.message }] });
+		const userMessage = request.message + '\n\n[CRITICAL REMINDER: If your response includes creating or editing code files, you MUST use the exact XML tags <EDIT file="...">...</EDIT> or <CREATE file="...">...</CREATE>!]';
+		messages.push({ role: ChatMessageRole.User, content: [{ type: 'text', value: userMessage }] });
 
 		const autoFallback = this.configurationService.getValue<boolean>(ShadowAIConfiguration.AutoModelFallback) !== false;
 		let finalError: unknown;
@@ -114,19 +179,23 @@ export class ShadowChatAgent implements IChatAgentImplementation {
 
 			try {
 				const response = await this.languageModelsService.sendChatRequest(modelId, undefined, messages, {}, token);
+				let responseText = '';
+
+				// Stream the response and show markdown in real-time
 				for await (const chunk of response.stream) {
-					if (Array.isArray(chunk)) {
-						for (const c of chunk) {
-							if (c.type === 'text') {
-								emittedText = true;
-								progress([{ kind: 'markdownContent', content: new MarkdownString(c.value) }]);
-							}
+					const parts = Array.isArray(chunk) ? chunk : [chunk];
+					for (const part of parts) {
+						if (part.type === 'text') {
+							emittedText = true;
+							responseText += part.value;
+							progress([{ kind: 'markdownContent', content: new MarkdownString(part.value) }]);
 						}
-					} else if (chunk.type === 'text') {
-						emittedText = true;
-						progress([{ kind: 'markdownContent', content: new MarkdownString(chunk.value) }]);
 					}
 				}
+
+				// After streaming completes, parse the full response for agent actions
+				await this.processAgentActions(responseText, progress);
+
 				return {};
 			} catch (error: unknown) {
 				finalError = error;
@@ -139,9 +208,352 @@ export class ShadowChatAgent implements IChatAgentImplementation {
 		}
 
 		const errorMessage = sanitizeShadowAIErrorMessage(finalError instanceof Error ? finalError.message : String(finalError));
-		progress([{ kind: 'markdownContent', content: new MarkdownString(`*Error: ${errorMessage}*`) }]);
+		progress([{ kind: 'markdownContent', content: new MarkdownString(`*Error during ${userModelStr}: ${errorMessage}*`) }]);
 
 		return {};
+	}
+
+	private async buildWorkspacePrompt(query: string, token: CancellationToken): Promise<string | undefined> {
+		const workspace = this.workspaceContextService.getWorkspace();
+		if (!workspace.folders || workspace.folders.length === 0) {
+			return undefined;
+		}
+
+		const candidates = await this.collectWorkspaceFiles(workspace.folders, token);
+		if (candidates.length === 0) {
+			return undefined;
+		}
+
+		const queryTokens = this.extractQueryTokens(query);
+		const rankedCandidates = this.rankCandidates(candidates, queryTokens);
+
+		const treePreview = rankedCandidates
+			.slice(0, ShadowChatAgent.WORKSPACE_TREE_PREVIEW_COUNT)
+			.map(candidate => candidate.displayPath)
+			.join('\n');
+
+		const snippetCandidates = rankedCandidates.slice(0, ShadowChatAgent.WORKSPACE_SNIPPET_FILE_COUNT);
+		const snippetSections: string[] = [];
+		for (const candidate of snippetCandidates) {
+			if (token.isCancellationRequested) {
+				break;
+			}
+
+			try {
+				const content = await this.fileService.readFile(candidate.resource, {
+					length: ShadowChatAgent.WORKSPACE_SNIPPET_BYTES
+				}, token);
+				const text = content.value.toString();
+				if (!text.trim()) {
+					continue;
+				}
+
+				snippetSections.push(`[${candidate.displayPath}]\n${text.slice(0, ShadowChatAgent.WORKSPACE_SNIPPET_CHARS)}`);
+			} catch {
+				// Best effort only. Some files may not be readable or text.
+			}
+		}
+
+		const parts: string[] = [];
+		parts.push('Workspace context snapshot (best effort):');
+		parts.push(treePreview);
+		if (snippetSections.length > 0) {
+			parts.push('Relevant file snippets:');
+			parts.push(snippetSections.join('\n\n'));
+		}
+		parts.push('Use this workspace context when answering and mention file paths when possible.');
+
+		return parts.join('\n\n');
+	}
+	
+	private async getActiveFilePrompt(): Promise<string | undefined> {
+		const activeControl = this.editorService.activeEditorPane?.getControl();
+		if (!activeControl) {
+			return undefined;
+		}
+
+		// Check if it's a text editor (common case)
+		const activeEditor = this.editorService.activeEditor;
+		if (!activeEditor || !activeEditor.resource) {
+			return undefined;
+		}
+
+		try {
+			const content = await this.fileService.readFile(activeEditor.resource, { length: ShadowChatAgent.WORKSPACE_SNIPPET_BYTES });
+			const text = content.value.toString();
+			const folder = this.workspaceContextService.getWorkspaceFolder(activeEditor.resource);
+			const relativePath = folder ? activeEditor.resource.path.substring(folder.uri.path.length + 1) : activeEditor.resource.fsPath;
+			
+			return `ACTIVE FILE: ${relativePath}\n${text.slice(0, ShadowChatAgent.WORKSPACE_SNIPPET_CHARS)}`;
+		} catch {
+			return undefined;
+		}
+	}
+
+	private async collectWorkspaceFiles(folders: readonly IWorkspaceFolder[], token: CancellationToken): Promise<IShadowAIWorkspaceFileCandidate[]> {
+		const collected: IShadowAIWorkspaceFileCandidate[] = [];
+		const queue: Array<{ resource: URI; depth: number }> = folders.map(folder => ({ resource: folder.uri, depth: 0 }));
+
+		while (queue.length > 0 && collected.length < ShadowChatAgent.WORKSPACE_MAX_FILES) {
+			if (token.isCancellationRequested) {
+				break;
+			}
+
+			const entry = queue.shift();
+			if (!entry) {
+				break;
+			}
+
+			let stat: IFileStat;
+			try {
+				stat = await this.fileService.resolve(entry.resource, { resolveSingleChildDescendants: false });
+			} catch {
+				continue;
+			}
+
+			if (!stat.isDirectory || !stat.children) {
+				continue;
+			}
+
+			for (const child of stat.children) {
+				if (collected.length >= ShadowChatAgent.WORKSPACE_MAX_FILES) {
+					break;
+				}
+
+				if (child.isDirectory) {
+					if (entry.depth + 1 <= ShadowChatAgent.WORKSPACE_MAX_DEPTH && !ShadowChatAgent.SKIPPED_FOLDERS.has(child.name.toLowerCase())) {
+						queue.push({ resource: child.resource, depth: entry.depth + 1 });
+					}
+					continue;
+				}
+
+				if (!child.isFile || !this.isLikelyTextFile(child.name)) {
+					continue;
+				}
+
+				collected.push({
+					resource: child.resource,
+					displayPath: this.toDisplayPath(child.resource, folders)
+				});
+			}
+		}
+
+		return collected;
+	}
+
+	private isLikelyTextFile(fileName: string): boolean {
+		const dot = fileName.lastIndexOf('.');
+		if (dot < 0) {
+			return false;
+		}
+
+		const extension = fileName.slice(dot).toLowerCase();
+		return ShadowChatAgent.TEXT_FILE_EXTENSIONS.has(extension);
+	}
+
+	private toDisplayPath(resource: URI, folders: readonly IWorkspaceFolder[]): string {
+		for (const folder of folders) {
+			if (resource.scheme !== folder.uri.scheme || resource.authority !== folder.uri.authority) {
+				continue;
+			}
+
+			if (resource.path === folder.uri.path || resource.path.startsWith(`${folder.uri.path}/`)) {
+				const relative = resource.path.slice(folder.uri.path.length).replace(/^\//, '');
+				return relative ? `${folder.name}/${relative}` : folder.name;
+			}
+		}
+
+		return resource.path;
+	}
+
+	private extractQueryTokens(query: string): readonly string[] {
+		const rawTokens = query.toLowerCase().split(/[^a-z0-9_\-.]+/g);
+		const unique = new Set<string>();
+		for (const token of rawTokens) {
+			if (!token || token.length < 3 || ShadowChatAgent.COMMON_STOP_WORDS.has(token)) {
+				continue;
+			}
+			unique.add(token);
+			if (unique.size >= 10) {
+				break;
+			}
+		}
+
+		return Array.from(unique);
+	}
+
+	private rankCandidates(candidates: readonly IShadowAIWorkspaceFileCandidate[], queryTokens: readonly string[]): IShadowAIWorkspaceFileCandidate[] {
+		if (queryTokens.length === 0) {
+			return [...candidates];
+		}
+
+		const scored = candidates.map(candidate => {
+			const haystack = candidate.displayPath.toLowerCase();
+			let score = 0;
+			for (const token of queryTokens) {
+				if (haystack.includes(token)) {
+					score += token.length;
+				}
+			}
+			return { candidate, score };
+		});
+
+		scored.sort((a, b) => b.score - a.score || a.candidate.displayPath.localeCompare(b.candidate.displayPath));
+		return scored.map(item => item.candidate);
+	}
+
+	private async resolveFilePathToUri(filePath: string): Promise<URI | undefined> {
+		const workspace = this.workspaceContextService.getWorkspace();
+		if (!workspace.folders || workspace.folders.length === 0) {
+			return undefined;
+		}
+
+		// Try exact match first
+		for (const folder of workspace.folders) {
+			const resource = URI.joinPath(folder.uri, filePath);
+			try {
+				const stat = await this.fileService.resolve(resource);
+				if (stat.isFile) {
+					return resource;
+				}
+			} catch {
+				// Continue
+			}
+		}
+
+		// Try relative to workspace root (if single folder)
+		if (workspace.folders.length === 1) {
+			// If filePath starts with folder name, strip it
+			const folderName = workspace.folders[0].name;
+			if (filePath.startsWith(folderName + '/')) {
+				const relativePath = filePath.slice(folderName.length + 1);
+				const resource = URI.joinPath(workspace.folders[0].uri, relativePath);
+				try {
+					const stat = await this.fileService.resolve(resource);
+					if (stat.isFile) {
+						return resource;
+					}
+				} catch {
+					// Continue
+				}
+			}
+		}
+
+		// Try base name match in collected context (best effort)
+		// This is useful if the model only gives the filename
+		const folders = workspace.folders;
+		const candidates = await this.collectWorkspaceFiles(folders, CancellationToken.None);
+		const fileName = filePath.split('/').pop()?.toLowerCase();
+		if (fileName) {
+			const match = candidates.find(c => c.displayPath.toLowerCase().endsWith('/' + fileName) || c.displayPath.toLowerCase() === fileName);
+			if (match) {
+				return match.resource;
+			}
+		}
+
+		return undefined;
+	}
+
+	private async processAgentActions(responseText: string, progress: (parts: IChatProgress[]) => void): Promise<void> {
+		// Match <EDIT file="path"> or <CREATE file="path"> blocks, including self-closing tags like <CREATE file="path" />
+		const actionBlockRegex = /<(EDIT|CREATE)\s+file="([^"]+)"\s*(?:>\n?([\s\S]*?)\n?<\/\1>|\/>)/gi;
+		let match: RegExpExecArray | null;
+
+		const autoApplyEdits = this.configurationService.getValue<boolean>(ShadowAIConfiguration.AutoApplyEdits) !== false;
+
+		while ((match = actionBlockRegex.exec(responseText)) !== null) {
+			const actionType = match[1].toUpperCase();
+			const filePath = match[2].trim();
+			// newContent could be undefined if it was a self-closing tag.
+			// If it is completely empty, provide a tiny placeholder comment so VS Code's diff UI
+			// actually detects a change and renders the Apply/Discard buttons.
+			let newContent = match[3] || '';
+			if (actionType === 'CREATE' && !newContent.trim()) {
+				newContent = '// Empty file created by Shadow AI\n';
+			}
+
+			const uri = actionType === 'CREATE'
+				? await this.resolveOrCreateFileUri(filePath)
+				: await this.resolveFilePathToUri(filePath);
+
+			if (!uri) {
+				continue;
+			}
+
+			if (autoApplyEdits) {
+				// Optimistically auto-apply directly to the file system
+				await this.fileService.writeFile(uri, VSBuffer.fromString(newContent));
+				await this.editorService.openEditor({ resource: uri });
+				continue;
+			}
+
+			// Read current file content to compute proper range
+			let lineCount = 1;
+			let lastLineLength = 1;
+			try {
+				const existing = await this.fileService.readFile(uri);
+				const text = existing.value.toString();
+				const lines = text.split('\n');
+				lineCount = lines.length;
+				lastLineLength = (lines[lineCount - 1]?.length ?? 0) + 1;
+			} catch {
+				// File doesn't exist yet (CREATE case)
+				lineCount = 1;
+				lastLineLength = 1;
+			}
+
+			const fullRange = new Range(1, 1, lineCount, lastLineLength);
+			const edit: TextEdit = { range: fullRange, text: newContent };
+
+			// Emit a real IChatTextEdit — VS Code renders this as a diff with Apply/Discard
+			progress([{
+				kind: 'textEdit',
+				uri,
+				edits: [edit],
+				done: true
+			}]);
+		}
+
+		// Match <DELETE file="path" />
+		const deleteRegex = /<DELETE\s+file="([^"]+)"\s*\/>/gi;
+		while ((match = deleteRegex.exec(responseText)) !== null) {
+			const filePath = match[1].trim();
+			progress([{
+				kind: 'command',
+				command: {
+					id: 'shadowAI.deleteFile',
+					title: `🗑️ Delete ${filePath}`,
+					arguments: [filePath]
+				}
+			}]);
+		}
+
+		// Match <RUN command="cmd" />
+		const runRegex = /<RUN\s+command="([^"]+)"\s*\/>/gi;
+		while ((match = runRegex.exec(responseText)) !== null) {
+			const cmd = match[1].trim();
+			progress([{
+				kind: 'command',
+				command: {
+					id: 'shadowAI.runInTerminal',
+					title: `▶️ Run: ${cmd}`,
+					arguments: [cmd]
+				}
+			}]);
+		}
+	}
+
+	/**
+	 * Resolve a file path to a URI, creating parent directories if needed (for CREATE).
+	 */
+	private async resolveOrCreateFileUri(filePath: string): Promise<URI | undefined> {
+		const workspace = this.workspaceContextService.getWorkspace();
+		if (!workspace.folders || workspace.folders.length === 0) {
+			return undefined;
+		}
+
+		const folder = workspace.folders[0];
+		return URI.joinPath(folder.uri, filePath);
 	}
 }
 
@@ -218,17 +630,20 @@ export class ShadowAIContribution extends Disposable implements IWorkbenchContri
 		this._register(chatAgentService.registerAgent(agentId, {
 			id: agentId,
 			name: 'ShadowCode',
+			// Set as default agent to handle general chat requests when Copilot is not active.
+			// Mark as non-core (isCore: false) so the SetupAgent logic recognizes it as a valid provider
+			// and doesn't show the "Set up a chat provider" onboarding message.
 			isDefault: true,
-			isCore: true,
+			isCore: false,
 			locations: [ChatAgentLocation.Chat, ChatAgentLocation.EditorInline, ChatAgentLocation.Terminal, ChatAgentLocation.Notebook],
 			modes: [ChatModeKind.Agent, ChatModeKind.Ask, ChatModeKind.Edit],
 			slashCommands: [],
 			disambiguation: [],
 			metadata: {},
-			extensionId: nullExtensionDescription.identifier,
-			extensionVersion: undefined,
-			extensionPublisherId: nullExtensionDescription.publisher,
-			extensionDisplayName: nullExtensionDescription.name
+			extensionId: new ExtensionIdentifier('shadowcode.ai'),
+			extensionVersion: '1.0.0',
+			extensionPublisherId: 'shadowcode',
+			extensionDisplayName: 'ShadowCode AI'
 		}));
 
 		const agentImpl = instantiationService.createInstance(ShadowChatAgent);
@@ -627,6 +1042,68 @@ registerAction2(class AddShadowAIProjectMemoryAction extends Action2 {
 		notificationService.info('Project memory note added.');
 	}
 });
+
+registerAction2(class ShadowAIDeleteFileAction extends Action2 {
+	constructor() {
+		super({
+			id: 'shadowAI.deleteFile',
+			title: localize2('shadowAI.deleteFile', "Shadow AI: Delete File"),
+			f1: false
+		});
+	}
+
+	async run(accessor: ServicesAccessor, filePath: string): Promise<void> {
+		const notificationService = accessor.get(INotificationService);
+		const fileService = accessor.get(IFileService);
+		const workspaceContextService = accessor.get(IWorkspaceContextService);
+
+		if (!filePath) {
+			return;
+		}
+
+		const workspace = workspaceContextService.getWorkspace();
+		if (!workspace.folders || workspace.folders.length === 0) {
+			notificationService.error('No workspace folder found.');
+			return;
+		}
+
+		const uri = URI.joinPath(workspace.folders[0].uri, filePath);
+
+		try {
+			await fileService.del(uri);
+			notificationService.info(`Deleted: ${filePath}`);
+		} catch (err) {
+			notificationService.error(`Failed to delete ${filePath}: ${err instanceof Error ? err.message : String(err)}`);
+		}
+	}
+});
+
+registerAction2(class ShadowAIRunInTerminalAction extends Action2 {
+	constructor() {
+		super({
+			id: 'shadowAI.runInTerminal',
+			title: localize2('shadowAI.runInTerminal', "Shadow AI: Run in Terminal"),
+			f1: false
+		});
+	}
+
+	async run(accessor: ServicesAccessor, command: string): Promise<void> {
+		const commandService = accessor.get(ICommandService);
+		const notificationService = accessor.get(INotificationService);
+
+		if (!command) {
+			return;
+		}
+
+		try {
+			// Use the built-in workbench command to send text to the terminal
+			await commandService.executeCommand('workbench.action.terminal.sendSequence', { text: command + '\n' });
+		} catch {
+			notificationService.info(`Shadow AI suggests running: ${command}`);
+		}
+	}
+});
+
 
 registerAction2(class AddShadowAIChatMemoryAction extends Action2 {
 	constructor() {

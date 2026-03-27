@@ -7,10 +7,19 @@ import { ShadowAIConfiguration } from './shadowAISettings.js';
 
 export type ShadowAIProviderId = 'ollama' | 'groq' | 'openrouter' | 'huggingface' | 'custom';
 
+const defaultEnabledProviders: readonly ShadowAIProviderId[] = ['ollama', 'groq', 'openrouter', 'huggingface', 'custom'];
+
 export function isShadowAIProviderEnabled(configurationService: IConfigurationService, provider: ShadowAIProviderId): boolean {
-	const enabledProviders = configurationService.getValue<string[]>(ShadowAIConfiguration.EnabledProviders) || [];
-	if (enabledProviders.length === 0) {
-		return false;
+	const configuredProviders = configurationService.getValue<string[]>(ShadowAIConfiguration.EnabledProviders);
+	if (!configuredProviders || configuredProviders.length === 0) {
+		return defaultEnabledProviders.includes(provider);
+	}
+
+	const enabledProviders: string[] = [];
+	for (const configuredProvider of configuredProviders) {
+		if (typeof configuredProvider === 'string') {
+			enabledProviders.push(configuredProvider.toLowerCase());
+		}
 	}
 
 	return enabledProviders.includes(provider);

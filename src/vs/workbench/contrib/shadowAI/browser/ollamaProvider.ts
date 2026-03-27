@@ -8,7 +8,7 @@ import { Emitter, Event } from '../../../../base/common/event.js';
 import { IDisposable, DisposableStore } from '../../../../base/common/lifecycle.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
-import { IRequestService, asJson } from '../../../../platform/request/common/request.js';
+import { IRequestService, asJson, asText } from '../../../../platform/request/common/request.js';
 import { ILanguageModelChatProvider, IChatMessage, ILanguageModelChatRequestOptions, ILanguageModelChatResponse, IChatResponsePart, ChatMessageRole, ILanguageModelChatMetadataAndIdentifier, ILanguageModelChatInfoOptions } from '../../chat/common/languageModels.js';
 import { ExtensionIdentifier } from '../../../../platform/extensions/common/extensions.js';
 import { ShadowAIConfiguration } from '../common/shadowAISettings.js';
@@ -49,8 +49,9 @@ export class OllamaLanguageModelProvider implements ILanguageModelChatProvider, 
 
 		return this._modelInfoCache.getOrCompute(cacheKey, ttlMs, async () => {
 			try {
+				const url = `${endpoint.replace(/\/+$/, '')}/api/tags`;
 				const context = await this._requestService.request({
-					url: `${endpoint}/api/tags`,
+					url,
 					type: 'GET',
 					callSite: 'ollama'
 				}, token);
@@ -102,7 +103,7 @@ export class OllamaLanguageModelProvider implements ILanguageModelChatProvider, 
 
 		const ollamaMessages = messages.map(m => ({
 			role: this._mapRole(m.role),
-			content: m.content.map(p => p.type === 'text' ? p.value : '').join('')
+			content: m.content.map(p => p.type === 'text' ? p.value : '').join('') || ' '
 		}));
 
 		const requestBody: IOllamaChatRequest = {
@@ -111,8 +112,9 @@ export class OllamaLanguageModelProvider implements ILanguageModelChatProvider, 
 			stream: true
 		};
 
+		const url = `${endpoint.replace(/\/+$/, '')}/api/chat`;
 		const context = await this._requestService.request({
-			url: `${endpoint}/api/chat`,
+			url,
 			type: 'POST',
 			data: JSON.stringify(requestBody),
 			headers: { 'Content-Type': 'application/json' },
@@ -120,7 +122,8 @@ export class OllamaLanguageModelProvider implements ILanguageModelChatProvider, 
 		}, token);
 
 		if (context.res.statusCode !== 200) {
-			throw new Error(`Ollama request failed with status ${context.res.statusCode}`);
+			const errorBody = await asText(context);
+			throw new Error(`Ollama request failed with status ${context.res.statusCode}: ${errorBody}`);
 		}
 
 		const source = new AsyncIterableSource<IChatResponsePart>();

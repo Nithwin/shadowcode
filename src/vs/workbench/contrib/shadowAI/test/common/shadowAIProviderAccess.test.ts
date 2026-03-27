@@ -36,6 +36,18 @@ suite('ShadowAIProviderAccess', () => {
 		});
 	});
 
+	test('defaults to built-in providers when enabledProviders is missing', () => {
+		const config = configuration({});
+
+		assert.deepStrictEqual({
+			ollama: isShadowAIProviderEnabled(config, 'ollama'),
+			groq: isShadowAIProviderEnabled(config, 'groq')
+		}, {
+			ollama: true,
+			groq: true
+		});
+	});
+
 	test('offline lock blocks cloud providers', () => {
 		const config = configuration({
 			[ShadowAIConfiguration.EnabledProviders]: ['ollama', 'openrouter'],

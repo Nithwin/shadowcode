@@ -26,7 +26,7 @@ import { IProductService } from '../../../../../../platform/product/common/produ
 import { ITelemetryService } from '../../../../../../platform/telemetry/common/telemetry.js';
 import { TelemetryTrustedValue } from '../../../../../../platform/telemetry/common/telemetryUtils.js';
 import { MANAGE_CHAT_COMMAND_ID } from '../../../common/constants.js';
-import { IModelControlEntry, ILanguageModelChatMetadataAndIdentifier, ILanguageModelsService } from '../../../common/languageModels.js';
+import { IModelControlEntry, ILanguageModelChatMetadataAndIdentifier, ILanguageModelsService, ILanguageModelChatMetadata } from '../../../common/languageModels.js';
 import { ChatEntitlement, IChatEntitlementService, isProUser } from '../../../../../services/chat/common/chatEntitlementService.js';
 import * as semver from '../../../../../../base/common/semver/semver.js';
 import { IModelPickerDelegate } from './modelPickerActionItem.js';
@@ -159,7 +159,7 @@ function createModelAction(
 		class: undefined,
 		description,
 		tooltip: model.metadata.name,
-		label: model.metadata.name,
+		label: ILanguageModelChatMetadata.asQualifiedName(model.metadata),
 		section,
 		toolbarActions: toolbarActions && toolbarActions.length > 0 ? toolbarActions : undefined,
 		run: () => onSelect(model),
@@ -746,7 +746,7 @@ export class ModelPickerWidget extends Disposable {
 			return;
 		}
 
-		const { name, statusIcon } = this._selectedModel?.metadata || {};
+		const { statusIcon } = this._selectedModel?.metadata || {};
 		const domChildren: (HTMLElement | string)[] = [];
 
 		if (statusIcon) {
@@ -754,7 +754,7 @@ export class ModelPickerWidget extends Disposable {
 			domChildren.push(iconElement);
 		}
 
-		const modelLabel = name ?? localize('chat.modelPicker.auto', "Auto");
+		const modelLabel = this._selectedModel ? ILanguageModelChatMetadata.asQualifiedName(this._selectedModel.metadata) : localize('chat.modelPicker.auto', "Auto");
 		const configDescription = this._selectedModel
 			? getModelConfigurationDescription(this._selectedModel, this._languageModelsService)
 			: undefined;

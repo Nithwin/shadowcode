@@ -11,7 +11,7 @@ import { listenStream } from '../../../../base/common/stream.js';
 import { IConfigurationService } from '../../../../platform/configuration/common/configuration.js';
 import { ExtensionIdentifier } from '../../../../platform/extensions/common/extensions.js';
 import { ILogService } from '../../../../platform/log/common/log.js';
-import { IRequestService } from '../../../../platform/request/common/request.js';
+import { IRequestService, asText } from '../../../../platform/request/common/request.js';
 import { ISecretStorageService } from '../../../../platform/secrets/common/secrets.js';
 import { ILanguageModelChatInfoOptions, ILanguageModelChatMetadataAndIdentifier, ILanguageModelChatProvider, IChatMessage, ILanguageModelChatRequestOptions, ILanguageModelChatResponse, IChatResponsePart, ChatMessageRole } from '../../chat/common/languageModels.js';
 import { ShadowAIConfiguration } from '../common/shadowAISettings.js';
@@ -93,7 +93,7 @@ export class GroqLanguageModelProvider implements ILanguageModelChatProvider, ID
 		const model = modelId.replace('groq:', '');
 		const requestMessages = messages.map(message => ({
 			role: this.mapRole(message.role),
-			content: message.content.map(part => part.type === 'text' ? part.value : '').join('')
+			content: message.content.map(part => part.type === 'text' ? part.value : '').join('') || ' '
 		}));
 
 		const requestBody = {
@@ -102,8 +102,9 @@ export class GroqLanguageModelProvider implements ILanguageModelChatProvider, ID
 			stream: true
 		};
 
+		const url = `${endpoint.replace(/\/+$/, '')}/chat/completions`;
 		const context = await this.requestService.request({
-			url: `${endpoint}/chat/completions`,
+			url,
 			type: 'POST',
 			data: JSON.stringify(requestBody),
 			headers: {
@@ -114,7 +115,8 @@ export class GroqLanguageModelProvider implements ILanguageModelChatProvider, ID
 		}, token);
 
 		if (context.res.statusCode !== 200) {
-			throw new Error(`Groq request failed with status ${context.res.statusCode}`);
+			const errorBody = await asText(context);
+			throw new Error(`Groq request failed with status ${context.res.statusCode}: ${errorBody}`);
 		}
 
 		const source = new AsyncIterableSource<IChatResponsePart>();

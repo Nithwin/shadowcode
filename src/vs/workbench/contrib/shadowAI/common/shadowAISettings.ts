@@ -1,5 +1,6 @@
 /*---------------------------------------------------------------------------------------------
- *  Copyright (c) ShadowCode Contributors. All rights reserved.
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import { localize } from '../../../../nls.js';
@@ -29,6 +30,7 @@ export const ShadowAIConfiguration = {
 	AgentMarketplaceUrl: 'shadowAI.agentMarketplaceUrl',
 	ProviderPriority: 'shadowAI.providerPriority',
 	DefaultModel: 'shadowAI.defaultModel',
+	AutoApplyEdits: 'shadowAI.autoApplyEdits',
 };
 
 const configurationRegistry = Registry.as<IConfigurationRegistry>(ConfigurationExtensions.Configuration);
@@ -59,7 +61,7 @@ configurationRegistry.registerConfiguration({
 		[ShadowAIConfiguration.GroqModels]: {
 			type: 'array',
 			items: { type: 'string' },
-			default: ['llama-3.1-8b-instant', 'llama3-8b-8192', 'mixtral-8x7b-32768'],
+			default: ['llama-3.1-8b-instant', 'llama-3.3-70b-versatile', 'mixtral-8x7b-32768'],
 			description: localize('shadowAI.groqModels', "Groq models available in the Shadow AI provider switcher."),
 			scope: ConfigurationScope.RESOURCE
 		},
@@ -78,7 +80,7 @@ configurationRegistry.registerConfiguration({
 		[ShadowAIConfiguration.OpenRouterModels]: {
 			type: 'array',
 			items: { type: 'string' },
-			default: ['meta-llama/llama-3.1-8b-instruct:free', 'mistralai/mistral-7b-instruct:free', 'qwen/qwen-2.5-7b-instruct:free'],
+			default: ['openrouter/auto', 'meta-llama/llama-3.1-8b-instruct', 'mistralai/mistral-7b-instruct', 'google/gemma-2-9b-it'],
 			description: localize('shadowAI.openRouterModels', "OpenRouter models available in the Shadow AI provider switcher."),
 			scope: ConfigurationScope.RESOURCE
 		},
@@ -175,9 +177,15 @@ configurationRegistry.registerConfiguration({
 		},
 		[ShadowAIConfiguration.DefaultModel]: {
 			type: 'string',
-			default: 'codellama',
-			description: localize('shadowAI.defaultModel', "The default model to use for Shadow AI features."),
-			scope: ConfigurationScope.RESOURCE
+			default: 'auto',
+			description: localize('shadowAI.defaultModel', "The default model ID to use when a new chat session starts. If 'auto', the first available provider will be selected."),
+			scope: ConfigurationScope.MACHINE
+		},
+		[ShadowAIConfiguration.AutoApplyEdits]: {
+			type: 'boolean',
+			default: true,
+			description: localize('shadowAI.autoApplyEdits', "Enable Optimistic Editing. When the AI proposes an edit or creates a new file, it will automatically save to disk and open the file, bypassing the 'Apply' button in the chat view."),
+			scope: ConfigurationScope.MACHINE
 		}
 	}
 });
