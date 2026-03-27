@@ -1,0 +1,8 @@
+src/vs/workbench/contrib/chat/browser/widget/input/chatInputAttachments.ts(7,1): error TS6133: 'ChatRequestVariableSet' is declared but its value is never read.
+src/vs/workbench/contrib/chat/browser/widget/input/chatInputContext.ts(32,32): error TS2551: Property 'getAttachmentsByType' does not exist on type 'ChatAttachmentModel'. Did you mean 'getAttachmentIDs'?
+src/vs/workbench/contrib/chat/browser/widget/input/chatInputUtils.ts(6,18): error TS6133: 'Range' is declared but its value is never read.
+src/vs/workbench/contrib/chat/browser/widget/input/chatInputUtils.ts(46,29): error TS2345: Argument of type 'IWordAtPosition' is not assignable to parameter of type 'IRange'.
+  Type 'IWordAtPosition' is missing the following properties from type 'IRange': startLineNumber, endLineNumber
+src/vs/workbench/contrib/chat/browser/widget/input/chatInputUtils.ts(96,10): error TS2564: Property 'currentValue' has no initializer and is not definitely assigned in the constructor.
+src/vs/workbench/test/browser/componentFixtures/chatInput.fixture.ts(30,25): error TS2459: Module '"../../../contrib/chat/browser/widget/input/chatInputPart.js"' declares 'IChatInputPartOptions' locally, but it is not exported.
+src/vs/workbench/test/browser/componentFixtures/chatInput.fixture.ts(30,48): error TS2459: Module '"../../../contrib/chat/browser/widget/input/chatInputPart.js"' declares 'IChatInputStyles' locally, but it is not exported.

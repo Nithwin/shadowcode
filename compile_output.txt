@@ -1,0 +1,4 @@
+
+> shadowcode@1.113.0 compile-check-ts-native
+> tsgo --project ./src/tsconfig.json --noEmit --skipLibCheck
+

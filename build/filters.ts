@@ -194,6 +194,7 @@ export const copyrightFilter = Object.freeze<string[]>([
 	'!extensions/html-language-features/server/src/modes/typescript/*',
 	'!extensions/*/server/bin/*',
 	'!src/vs/workbench/contrib/terminal/common/scripts/psreadline/**',
+	'!src/vs/workbench/contrib/chat/browser/advanced/**',
 ]);
 
 export const tsFormattingFilter = Object.freeze<string[]>([

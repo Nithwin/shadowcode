@@ -26,7 +26,7 @@ import { Disposable, DisposableMap, DisposableStore, IDisposable, MutableDisposa
 import { ResourceSet } from '../../../../../../base/common/map.js';
 import { MarshalledId } from '../../../../../../base/common/marshallingIds.js';
 import { Schemas } from '../../../../../../base/common/network.js';
-import { mixin } from '../../../../../../base/common/objects.js';
+
 import { autorun, derived, derivedOpts, IObservable, ISettableObservable, observableFromEvent, observableValue } from '../../../../../../base/common/observable.js';
 import { isMacintosh } from '../../../../../../base/common/platform.js';
 import { isEqual } from '../../../../../../base/common/resources.js';
@@ -49,6 +49,10 @@ import { ContentHoverController } from '../../../../../../editor/contrib/hover/b
 import { GlyphHoverController } from '../../../../../../editor/contrib/hover/browser/glyphHoverController.js';
 import { LinkDetector } from '../../../../../../editor/contrib/links/browser/links.js';
 import { SuggestController } from '../../../../../../editor/contrib/suggest/browser/suggestController.js';
+import { ILanguageFeaturesService } from '../../../../../../editor/common/services/languageFeatures.js';
+import { ChatInlineCompletionsProvider } from './chatInlineCompletionsProvider.js';
+// Imported for re-export and constants
+import { IChatInputStyles, IChatInputPartOptions, ChatWidgetLocation, IChatWidgetLocationInfo, createInputStateMemento, INPUT_EDITOR_MAX_HEIGHT, INPUT_EDITOR_LINE_HEIGHT, INPUT_EDITOR_PADDING, CachedLanguageModelsKey, CHAT_INPUT_PICKER_COLLAPSE_WIDTH } from './chatInputTypes.js';
 import { localize } from '../../../../../../nls.js';
 import { IAccessibilityService } from '../../../../../../platform/accessibility/common/accessibility.js';
 import { MenuWorkbenchButtonBar } from '../../../../../../platform/actions/browser/buttonbar.js';
@@ -63,7 +67,7 @@ import { ServiceCollection } from '../../../../../../platform/instantiation/comm
 import { IKeybindingService } from '../../../../../../platform/keybinding/common/keybinding.js';
 import { WorkbenchList } from '../../../../../../platform/list/browser/listService.js';
 import { ILogService } from '../../../../../../platform/log/common/log.js';
-import { ObservableMemento, observableMemento } from '../../../../../../platform/observable/common/observableMemento.js';
+import { ObservableMemento } from '../../../../../../platform/observable/common/observableMemento.js';
 import { bindContextKey } from '../../../../../../platform/observable/common/platformObservableUtils.js';
 import { IStorageService, StorageScope, StorageTarget } from '../../../../../../platform/storage/common/storage.js';
 import { IThemeService } from '../../../../../../platform/theme/common/themeService.js';
@@ -103,7 +107,7 @@ import { IChatAttachmentWidgetRegistry } from '../../attachments/chatAttachmentW
 import { DefaultChatAttachmentWidget, ElementChatAttachmentWidget, FileAttachmentWidget, ImageAttachmentWidget, NotebookCellOutputChatAttachmentWidget, PasteAttachmentWidget, PromptFileAttachmentWidget, PromptTextAttachmentWidget, SCMHistoryItemAttachmentWidget, SCMHistoryItemChangeAttachmentWidget, SCMHistoryItemChangeRangeAttachmentWidget, TerminalCommandAttachmentWidget, ToolSetOrToolItemAttachmentWidget } from '../../attachments/chatAttachmentWidgets.js';
 import { ChatImplicitContexts } from '../../attachments/chatImplicitContext.js';
 import { ImplicitContextAttachmentWidget } from '../../attachments/implicitContextAttachment.js';
-import { IChatWidget, IChatWidgetViewModelChangeEvent, ISessionTypePickerDelegate, isIChatResourceViewContext, isIChatViewViewContext, IWorkspacePickerDelegate } from '../../chat.js';
+import { IChatWidget, IChatWidgetViewModelChangeEvent, ISessionTypePickerDelegate, isIChatResourceViewContext, isIChatViewViewContext } from '../../chat.js';
 import { ChatEditingShowChangesAction, ViewAllSessionChangesAction, ViewPreviousEditsAction } from '../../chatEditing/chatEditingActions.js';
 import { resizeImage } from '../../chatImageUtils.js';
 import { ChatSessionPickerActionItem, IChatSessionPickerDelegate } from '../../chatSessions/chatSessionPickerActionItem.js';
@@ -131,87 +135,6 @@ import { Target } from '../../../common/promptSyntax/promptTypes.js';
 import { EnhancedModelPickerActionItem } from './modelPickerActionItem2.js';
 
 const $ = dom.$;
-
-const INPUT_EDITOR_MAX_HEIGHT = 250;
-const INPUT_EDITOR_LINE_HEIGHT = 20;
-const INPUT_EDITOR_PADDING = { compact: { top: 2, bottom: 2 }, default: { top: 12, bottom: 12 } };
-const CachedLanguageModelsKey = 'chat.cachedLanguageModels.v2';
-const CHAT_INPUT_PICKER_COLLAPSE_WIDTH = 320;
-
-export interface IChatInputStyles {
-	overlayBackground: string;
-	listForeground: string;
-	listBackground: string;
-}
-
-export interface IChatInputPartOptions {
-	defaultMode?: IChatMode;
-	renderFollowups: boolean;
-	renderStyle?: 'compact';
-	renderInputToolbarBelowInput: boolean;
-	menus: {
-		executeToolbar: MenuId;
-		telemetrySource: string;
-		inputSideToolbar?: MenuId;
-	};
-	editorOverflowWidgetsDomNode?: HTMLElement;
-	renderWorkingSet: boolean;
-	enableImplicitContext?: boolean;
-	supportsChangingModes?: boolean;
-	dndContainer?: HTMLElement;
-	inputEditorMinLines?: number;
-	widgetViewKindTag: string;
-	/**
-	 * Optional delegate for the session target picker.
-	 * When provided, allows the input part to maintain independent state for the selected session type.
-	 */
-	sessionTypePickerDelegate?: ISessionTypePickerDelegate;
-	/**
-	 * Optional delegate for the workspace picker.
-	 * When provided, shows a workspace picker allowing users to select a target workspace
-	 * for their chat request. This is useful for empty window contexts.
-	 */
-	workspacePickerDelegate?: IWorkspacePickerDelegate;
-	/**
-	 * Whether we are running in the sessions window.
-	 * When true, the secondary toolbar (permissions picker) is hidden.
-	 */
-	isSessionsWindow?: boolean;
-}
-
-export interface IWorkingSetEntry {
-	uri: URI;
-}
-
-export const enum ChatWidgetLocation {
-	SidebarLeft = 'sidebarLeft',
-	SidebarRight = 'sidebarRight',
-	Panel = 'panel',
-	Editor = 'editor',
-}
-
-export interface IChatWidgetLocationInfo {
-	readonly location: ChatWidgetLocation;
-	readonly isMaximized: boolean;
-}
-
-const emptyInputState = observableMemento<IChatModelInputState | undefined>({
-	defaultValue: undefined,
-	key: 'chat.untitledInputState',
-	toStorage: JSON.stringify,
-	fromStorage(value) {
-		const obj = JSON.parse(value) as IChatModelInputState;
-		if (obj.selectedModel && !obj.selectedModel.metadata.isDefaultForLocation) {
-			// Migrate old `isDefault` to `isDefaultForLocation`
-			type OldILanguageModelChatMetadata = ILanguageModelChatMetadata & { isDefault?: boolean };
-			const oldIsDefault = (obj.selectedModel.metadata as OldILanguageModelChatMetadata).isDefault;
-			const isDefaultForLocation = { [ChatAgentLocation.Chat]: Boolean(oldIsDefault) };
-			mixin(obj.selectedModel.metadata, { isDefaultForLocation: isDefaultForLocation } satisfies Partial<ILanguageModelChatMetadata>);
-			delete (obj.selectedModel.metadata as OldILanguageModelChatMetadata).isDefault;
-		}
-		return obj;
-	},
-});
 
 export class ChatInputPart extends Disposable implements IHistoryNavigationWidget {
 	private static _counter = 0;
@@ -334,6 +257,7 @@ export class ChatInputPart extends Disposable implements IHistoryNavigationWidge
 	private _inputEditor!: CodeEditorWidget;
 	private _inputEditorElement!: HTMLElement;
 	private _forceVisibleScrollbarUntilAccept = false;
+	private _chatInlineCompletionsProvider: ChatInlineCompletionsProvider | undefined;
 
 	// Reference to the input model for syncing input state
 	private _inputModel: IInputModel | undefined;
@@ -545,12 +469,13 @@ export class ChatInputPart extends Disposable implements IHistoryNavigationWidge
 		@IWorkbenchLayoutService private readonly layoutService: IWorkbenchLayoutService,
 		@IViewDescriptorService private readonly viewDescriptorService: IViewDescriptorService,
 		@IChatAttachmentWidgetRegistry private readonly _chatAttachmentWidgetRegistry: IChatAttachmentWidgetRegistry,
+		@ILanguageFeaturesService private readonly languageFeaturesService: ILanguageFeaturesService,
 	) {
 		super();
 
 		// Initialize debounced text sync scheduler
 		this._syncTextDebounced = this._register(new RunOnceScheduler(() => this._syncInputStateToModel(), 150));
-		this._emptyInputState = this._register(emptyInputState(StorageScope.WORKSPACE, StorageTarget.USER, this.storageService));
+		this._emptyInputState = this._register(createInputStateMemento(StorageScope.WORKSPACE, StorageTarget.USER, this.storageService));
 
 		this._contextResourceLabels = this._register(this.instantiationService.createInstance(ResourceLabels, { onDidChangeVisibility: this._onDidChangeVisibility.event }));
 		this._currentModeObservable = observableValue<IChatMode>('currentMode', this.options.defaultMode ?? ChatMode.Agent);
@@ -2127,6 +2052,22 @@ export class ChatInputPart extends Disposable implements IHistoryNavigationWidge
 		const editorOptions = getSimpleCodeEditorWidgetOptions();
 		editorOptions.contributions?.push(...EditorExtensionsRegistry.getSomeEditorContributions([ContentHoverController.ID, GlyphHoverController.ID, DropIntoEditorController.ID, CopyPasteController.ID, LinkDetector.ID]));
 		this._inputEditor = this._register(scopedInstantiationService.createInstance(CodeEditorWidget, this._inputEditorElement, options, editorOptions));
+
+		// Register inline completions provider for chat input
+		this._chatInlineCompletionsProvider = this._register(
+			new ChatInlineCompletionsProvider(
+				this.languageModelsService,
+				this.logService,
+				() => this._currentLanguageModel.get()?.identifier
+			)
+		);
+
+		// Register the provider with the language features service
+		const inlineCompletionsDisposable = this.languageFeaturesService.inlineCompletionsProvider.register(
+			'*', // Register for all language modes
+			this._chatInlineCompletionsProvider
+		);
+		this._register(inlineCompletionsDisposable);
 
 		SuggestController.get(this._inputEditor)?.forceRenderingAbove();
 		options.overflowWidgetsDomNode?.classList.add('hideSuggestTextIcons');
